@@ -19,6 +19,8 @@ var (
 	FakeToken = "eyJ0eXAiOiJKV1Q2lkIjo1MTEsImVtCJ1c2V2ns-QgWxERsywROmzASDniT3VHebO1DqgJ5ZIg"
 
 	FakeTokenExpireDate = "2017-04-17T01:28:15.000Z"
+
+	FakeAuthOpts = AuthOptions{Username: "whatever", Password: "whatever"}
 )
 
 // SetupHTTP prepares the Mux and Server.
@@ -62,12 +64,10 @@ func TestNewCommonClient(t *testing.T) {
 
 	SetupGCoreAuthServer()
 
-	authOpts := AuthOptions{Username: "whatever", Password: "whatever"}
-
 	common := NewCommonClient(nil)
 	common.BaseURL = MockClientURL()
 
-	err := common.Authenticate(context.Background(), authOpts)
+	err := common.Authenticate(context.Background(), FakeAuthOpts)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,12 +83,10 @@ func TestNewResellerClient(t *testing.T) {
 
 	SetupGCoreAuthServer()
 
-	authOpts := AuthOptions{Username: "whatever", Password: "whatever"}
-
 	reseller := NewResellerClient(nil)
 	reseller.BaseURL = MockClientURL()
 
-	err := reseller.Authenticate(context.Background(), authOpts)
+	err := reseller.Authenticate(context.Background(), FakeAuthOpts)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -97,4 +95,11 @@ func TestNewResellerClient(t *testing.T) {
 		t.Errorf("Expected: %s, got %s", FakeToken, reseller.Token.Value)
 	}
 
+}
+
+func GetAuthenticatedCommonClient() *CommonClient {
+	common := NewCommonClient(nil)
+	common.BaseURL = MockClientURL()
+	common.Authenticate(context.Background(), FakeAuthOpts)
+	return common
 }
