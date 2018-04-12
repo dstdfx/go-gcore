@@ -8,6 +8,7 @@ import (
 
 const (
 	resellUsersURL     = "/users"
+	resellClientsURL   = "/clients"
 	resellClientURL    = "/clients/%d"
 	resellUserTokenURL = "/users/%d/token"
 )
@@ -25,8 +26,6 @@ type ClientAccount struct {
 	Created          *GCoreTime `json:"created"`
 	Updated          *GCoreTime `json:"updated"`
 	CompanyName      string     `json:"companyName"`
-	Manager          string     `json:"manager"`
-	CompanyOwner     string     `json:"company_owner"`
 	UtilizationLevel int        `json:"utilization_level"`
 	Reseller         int        `json:"reseller"`
 }
@@ -38,6 +37,14 @@ type CreateClientBody struct {
 	Phone    string `json:"phone"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type UpdateClientBody struct {
+	Name        string `json:"name"`
+	CompanyName string `json:"companyName"`
+	Phone       string `json:"phone"`
+	Email       string `json:"email"`
+	Seller      int    `json:"seller,omitempty"`
 }
 
 func (s *ClientsService) Create(ctx context.Context, body CreateClientBody) (*ClientAccount, *http.Response, error) {
@@ -70,6 +77,38 @@ func (s *ClientsService) Get(ctx context.Context, clientID int) (*ClientAccount,
 	}
 
 	return clientAccount, resp, nil
+}
+
+func (s *ClientsService) List(ctx context.Context) (*[]ClientAccount, *http.Response, error) {
+	req, err := s.client.NewRequest(ctx, "GET", resellClientsURL, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	clients := make([]ClientAccount, 0)
+
+	resp, err := s.client.Do(req, &clients)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return &clients, resp, nil
+}
+
+func (s *ClientsService) Update(ctx context.Context, clientID int, body UpdateClientBody) (*ClientAccount, *http.Response, error) {
+	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(resellClientURL, clientID), body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	client := &ClientAccount{}
+
+	resp, err := s.client.Do(req, client)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return client, resp, nil
 }
 
 func (s *ClientsService) GetCommonClient(ctx context.Context, userID int) (*CommonClient, *http.Response, error) {

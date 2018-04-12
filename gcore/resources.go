@@ -66,7 +66,6 @@ func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, 
 	return resource, resp, nil
 }
 
-
 func (s *ResourcesService) Create(ctx context.Context, body CreateResourceBody) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "POST", resourcesURL, body)
 	if err != nil {

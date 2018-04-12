@@ -103,3 +103,10 @@ func GetAuthenticatedCommonClient() *CommonClient {
 	common.Authenticate(context.Background(), FakeAuthOpts)
 	return common
 }
+
+func GetAuthenticatedResellerClient() *ResellerClient {
+	resell := NewResellerClient(nil)
+	resell.BaseURL = MockClientURL()
+	resell.Authenticate(context.Background(), FakeAuthOpts)
+	return resell
+}

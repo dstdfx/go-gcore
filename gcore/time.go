@@ -17,7 +17,6 @@ func NewGCoreTime(time time.Time) *GCoreTime {
 	return &GCoreTime{Time: time}
 }
 
-
 func (t *GCoreTime) UnmarshalJSON(b []byte) (err error) {
 	s := strings.Trim(string(b), "\"")
 	if s == "null" {

@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// Mocked responses
 var (
 	getResourceResp = `{
     "client": 170,
@@ -28,6 +29,8 @@ var (
     "updated": "2018-04-09T11:32:31.000000Z"
 }
      `
+	createResourceResp = getResourceResp
+
 	listResourcesResp = `[
     {
         "client": 170,
@@ -47,8 +50,10 @@ var (
         "updated": "2018-04-09T11:32:31.000000Z"
     }
 ]`
-	createResourceResp = getResourceResp
+)
 
+// Expected results
+var (
 	getResourceExpected = &Resource{
 		ID:          220,
 		CName:       "cdn.site.com",
