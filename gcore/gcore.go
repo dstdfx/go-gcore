@@ -61,6 +61,7 @@ type ResellerClient struct {
 
 // CommonServices represent specific account type features
 type CommonServices struct {
+	Account   *AccountService
 	Resources *ResourcesService
 }
 
@@ -112,6 +113,7 @@ func NewCommonClient(httpClient *http.Client) *CommonClient {
 	c.common.client = c
 
 	commonServices := CommonServices{}
+	commonServices.Account = (*AccountService)(&c.common)
 	commonServices.Resources = (*ResourcesService)(&c.common)
 
 	commonClient := &CommonClient{c, commonServices}
