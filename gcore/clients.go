@@ -47,6 +47,15 @@ type UpdateClientBody struct {
 	Seller      int    `json:"seller,omitempty"`
 }
 
+type ListOpts struct {
+	Email       string `url:"email,omitempty"`
+	Name        string `url:"name,omitempty"`
+	CompanyName string `url:"companyName,omitempty"`
+	Deleted     bool   `url:"deleted,omitempty"`
+	CDN         string `url:"cdn,omitempty"`
+	Activated   bool   `url:"activated,omitempty"`
+}
+
 func (s *ClientsService) Create(ctx context.Context, body CreateClientBody) (*ClientAccount, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "POST", resellUsersURL, body)
 	if err != nil {
@@ -79,8 +88,13 @@ func (s *ClientsService) Get(ctx context.Context, clientID int) (*ClientAccount,
 	return clientAccount, resp, nil
 }
 
-func (s *ClientsService) List(ctx context.Context) (*[]ClientAccount, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", resellClientsURL, nil)
+func (s *ClientsService) List(ctx context.Context, opts ListOpts) (*[]ClientAccount, *http.Response, error) {
+	url, err := addOptions(resellClientsURL, opts)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}

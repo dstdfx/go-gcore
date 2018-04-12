@@ -209,7 +209,7 @@ func TestClientsService_List(t *testing.T) {
 
 	resell := GetAuthenticatedResellerClient()
 
-	got, _, err := resell.Clients.List(context.Background())
+	got, _, err := resell.Clients.List(context.Background(), ListOpts{})
 	if err != nil {
 		t.Fatal(err)
 	}
