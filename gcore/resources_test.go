@@ -72,7 +72,7 @@ var (
 	createResourceExpected = getResourceExpected
 )
 
-func TestResourcesService_GetResource(t *testing.T) {
+func TestResourcesService_Get(t *testing.T) {
 	SetupHTTP()
 	defer TeardownHTTP()
 
@@ -84,7 +84,7 @@ func TestResourcesService_GetResource(t *testing.T) {
 		})
 
 	client := GetAuthenticatedCommonClient()
-	got, _, err := client.Resources.GetResource(context.Background(), getResourceExpected.ID)
+	got, _, err := client.Resources.Get(context.Background(), getResourceExpected.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -94,7 +94,7 @@ func TestResourcesService_GetResource(t *testing.T) {
 	}
 }
 
-func TestResourcesService_ListResources(t *testing.T) {
+func TestResourcesService_List(t *testing.T) {
 	SetupHTTP()
 	defer TeardownHTTP()
 
@@ -106,7 +106,7 @@ func TestResourcesService_ListResources(t *testing.T) {
 		})
 
 	client := GetAuthenticatedCommonClient()
-	got, _, err := client.Resources.ListResources(context.Background())
+	got, _, err := client.Resources.List(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -116,7 +116,7 @@ func TestResourcesService_ListResources(t *testing.T) {
 	}
 }
 
-func TestResourcesService_CreateResource(t *testing.T) {
+func TestResourcesService_Create(t *testing.T) {
 	SetupHTTP()
 	defer TeardownHTTP()
 
@@ -137,7 +137,7 @@ func TestResourcesService_CreateResource(t *testing.T) {
 	}
 
 	client := GetAuthenticatedCommonClient()
-	got, _, err := client.Resources.CreateResource(context.Background(), resourceBody)
+	got, _, err := client.Resources.Create(context.Background(), resourceBody)
 	if err != nil {
 		t.Fatal(err)
 	}

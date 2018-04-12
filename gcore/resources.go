@@ -34,7 +34,7 @@ type CreateResourceBody struct {
 	SecondaryHostnames []string `json:"secondaryHostnames"`
 }
 
-func (s *ResourcesService) ListResources(ctx context.Context) (*[]Resource, *http.Response, error) {
+func (s *ResourcesService) List(ctx context.Context) (*[]Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", resourcesURL, nil)
 	if err != nil {
 		return nil, nil, err
@@ -50,7 +50,7 @@ func (s *ResourcesService) ListResources(ctx context.Context) (*[]Resource, *htt
 	return &resources, resp, nil
 }
 
-func (s *ResourcesService) GetResource(ctx context.Context, resourceID int) (*Resource, *http.Response, error) {
+func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(resourceURL, resourceID), nil)
 	if err != nil {
 		return nil, nil, err
@@ -67,7 +67,7 @@ func (s *ResourcesService) GetResource(ctx context.Context, resourceID int) (*Re
 }
 
 
-func (s *ResourcesService) CreateResource(ctx context.Context, body CreateResourceBody) (*Resource, *http.Response, error) {
+func (s *ResourcesService) Create(ctx context.Context, body CreateResourceBody) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "POST", resourcesURL, body)
 	if err != nil {
 		return nil, nil, err

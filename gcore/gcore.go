@@ -66,7 +66,9 @@ type CommonServices struct {
 }
 
 // ResellerServices represent specific account type features
-type ResellerServices struct {}
+type ResellerServices struct {
+	Clients *ClientsService
+}
 
 type AuthOptions struct {
 	Username string `json:"username"`
@@ -135,6 +137,7 @@ func NewResellerClient(httpClient *http.Client) *ResellerClient {
 	c.common.client = c
 
 	resellerServices := ResellerServices{}
+	resellerServices.Clients = (*ClientsService)(&c.common)
 	resellClient := &ResellerClient{c, resellerServices}
 
 	return resellClient
