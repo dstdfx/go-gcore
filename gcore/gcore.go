@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/google/go-querystring/query"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -210,8 +210,10 @@ func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
 		return resp, err
 	}
 
-	if err = ExtractResult(resp, to); err != nil {
-		return resp, err
+	if to != nil {
+		if err = ExtractResult(resp, to); err != nil {
+			return resp, err
+		}
 	}
 
 	c.log.Debugf("[go-gcore] RESP   %v %v %v", req.Method, req.URL, resp.StatusCode)
