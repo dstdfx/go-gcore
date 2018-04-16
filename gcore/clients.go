@@ -7,10 +7,12 @@ import (
 )
 
 const (
-	resellUsersURL     = "/users"
-	resellClientsURL   = "/clients"
-	resellClientURL    = "/clients/%d"
-	resellUserTokenURL = "/users/%d/token"
+	resellUsersURL          = "/users"
+	resellClientsURL        = "/clients"
+	resellClientURL         = "/clients/%d"
+	resellUserTokenURL      = "/users/%d/token"
+	resellClientServicesURL = "/clients/%d/services"
+	resellClientServiceURL  = "/clients/%d/services/%d"
 )
 
 type ClientsService service
@@ -142,4 +144,85 @@ func (s *ClientsService) GetCommonClient(ctx context.Context, userID int) (*Comm
 	commonClient.Token = token
 
 	return commonClient, resp, nil
+}
+
+type PaidService struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+// This feature has been taken from the admin web-panel, is not documented at all
+// It allows to pause CDN service for specific client
+func (s *ClientsService) SuspendCDN(ctx context.Context, clientID int) (*http.Response, error) {
+	url, _ := addOptions(fmt.Sprintf(resellClientServicesURL, clientID), struct {
+		Name string `url:"name"`
+	}{"CDN"})
+
+	req, err := s.client.NewRequest(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	paidServices := make([]PaidService, 0)
+
+	resp, err := s.client.Do(req, &paidServices)
+	if err != nil {
+		return resp, err
+	}
+
+	// The only one CDN service is supposed to be
+	req, err = s.client.NewRequest(ctx, "PUT",
+		fmt.Sprintf(resellClientServiceURL, clientID, paidServices[0].ID),
+		struct {
+			Enabled bool   `json:"enabled"`
+			Status  string `json:"status"`
+		}{false, "paused"})
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err = s.client.Do(req, nil)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, nil
+}
+
+// This feature has been taken from the admin web-panel, is not documented at all
+// It allows to resume CDN service for specific client
+func (s *ClientsService) ResumeCDN(ctx context.Context, clientID int) (*http.Response, error) {
+	url, _ := addOptions(fmt.Sprintf(resellClientServicesURL, clientID), struct {
+		Name string `url:"name"`
+	}{"CDN"})
+
+	req, err := s.client.NewRequest(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	paidServices := make([]PaidService, 0)
+
+	resp, err := s.client.Do(req, &paidServices)
+	if err != nil {
+		return resp, err
+	}
+
+	// The only one CDN service is supposed to be
+	req, err = s.client.NewRequest(ctx, "PUT",
+		fmt.Sprintf(resellClientServiceURL, clientID, paidServices[0].ID),
+		struct {
+			Enabled bool   `json:"enabled"`
+			Status  string `json:"status"`
+		}{true, "active"})
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err = s.client.Do(req, nil)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, nil
 }
