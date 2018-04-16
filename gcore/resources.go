@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	resourcesURL = "/resources"
-	resourceURL  = "/resources/%d"
+	resourcesURL     = "/resources"
+	resourceURL      = "/resources/%d"
+	resourcePurgeURL = "/resources/%d/purge"
 )
 
 type ResourcesService service
@@ -80,4 +81,18 @@ func (s *ResourcesService) Create(ctx context.Context, body CreateResourceBody) 
 	}
 
 	return resource, resp, nil
+}
+
+func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths map[string]string) (*http.Response, error) {
+	req, err := s.client.NewRequest(ctx, "POST", resourcePurgeURL, paths)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := s.client.Do(req, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
