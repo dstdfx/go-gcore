@@ -46,6 +46,7 @@ var (
   "id": 2,
   "users": [],
   "currentUser": 7,
+  "client": 5,
   "email": "common2@gcore.lu",
   "phone": "Client 2 Company Phone",
   "name": "Client 2 Name",
@@ -124,22 +125,22 @@ var (
 
 // Expected results
 var (
-	createClientExpected = &ClientAccount{ID: 2, Users: []User{}, CurrentUser: 7, Status: "active",
+	createClientExpected = &ClientAccount{ID: 2, Users: []*User{}, CurrentUser: 7, Status: "active",
 		Created:     NewGCoreTime(time.Date(2018, 4, 9, 11, 31, 40, 0, time.UTC)),
 		Updated:     NewGCoreTime(time.Date(2018, 4, 9, 11, 32, 31, 0, time.UTC)),
 		CompanyName: "Client 2 Company Name", UtilizationLevel: 0, Reseller: 1,
-		Email: "common2@gcore.lu", Phone: "Client 2 Company Phone", Name: "Client 2 Name"}
+		Email: "common2@gcore.lu", Phone: "Client 2 Company Phone", Name: "Client 2 Name", Client: 5}
 
-	getClientExpected = &ClientAccount{ID: 2, Users: []User{
+	getClientExpected = &ClientAccount{ID: 2, Users: []*User{
 		{ID: 6, Name: "Client 2 Name", Deleted: false, Email: "common2@gcore.lu", Client: 2,
 			Company: "Client 2 Company Name", Lang: "en", Phone: "1232323",
-			Groups: []Group{{ID: 2, Name: "Administrators"}}}}, CurrentUser: 7, Status: "trial",
+			Groups: []*Group{{ID: 2, Name: "Administrators"}}}}, CurrentUser: 7, Status: "trial",
 		Created:     NewGCoreTime(time.Date(2018, 4, 9, 11, 31, 40, 0, time.UTC)),
 		Updated:     NewGCoreTime(time.Date(2018, 4, 9, 11, 32, 31, 0, time.UTC)),
 		CompanyName: "Client 2 Company Name", UtilizationLevel: 0, Reseller: 1,
 		Email: "common2@gcore.lu", Phone: "Client 2 Company Phone", Name: "Client 2 Name"}
 
-	listClientExpected = &[]ClientAccount{*getClientExpected}
+	listClientExpected = []*ClientAccount{getClientExpected}
 
 	updateClientExpected = getClientExpected
 
@@ -166,7 +167,7 @@ func TestClientsService_Create(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	createClientExpected.Users = []User{}
+	createClientExpected.Users = []*User{}
 
 	if !reflect.DeepEqual(got, createClientExpected) {
 		t.Errorf("Expected: %+v, got %+v\n", createClientExpected, got)

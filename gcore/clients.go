@@ -19,7 +19,8 @@ type ClientsService service
 
 type ClientAccount struct {
 	ID               int        `json:"id"`
-	Users            []User     `json:"users"`
+	Client           int        `json:"client"`
+	Users            []*User    `json:"users"`
 	CurrentUser      int        `json:"currentUser"`
 	Email            string     `json:"email"`
 	Phone            string     `json:"phone"`
@@ -90,7 +91,7 @@ func (s *ClientsService) Get(ctx context.Context, clientID int) (*ClientAccount,
 	return clientAccount, resp, nil
 }
 
-func (s *ClientsService) List(ctx context.Context, opts ListOpts) (*[]ClientAccount, *http.Response, error) {
+func (s *ClientsService) List(ctx context.Context, opts ListOpts) ([]*ClientAccount, *http.Response, error) {
 	url, err := addOptions(resellClientsURL, opts)
 	if err != nil {
 		return nil, nil, err
@@ -101,14 +102,14 @@ func (s *ClientsService) List(ctx context.Context, opts ListOpts) (*[]ClientAcco
 		return nil, nil, err
 	}
 
-	clients := make([]ClientAccount, 0)
+	clients := make([]*ClientAccount, 0)
 
 	resp, err := s.client.Do(req, &clients)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return &clients, resp, nil
+	return clients, resp, nil
 }
 
 func (s *ClientsService) Update(ctx context.Context, clientID int, body UpdateClientBody) (*ClientAccount, *http.Response, error) {

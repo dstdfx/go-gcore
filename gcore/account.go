@@ -21,16 +21,16 @@ type Account struct {
 }
 
 type User struct {
-	ID       int     `json:"id"`
-	Deleted  bool    `json:"deleted"`
-	Email    string  `json:"email"`
-	Name     string  `json:"name"`
-	Client   int     `json:"client"`
-	Company  string  `json:"company"`
-	Lang     string  `json:"lang"`
-	Phone    string  `json:"phone"`
-	Reseller int     `json:"reseller,omitempty"`
-	Groups   []Group `json:"groups"`
+	ID       int      `json:"id"`
+	Deleted  bool     `json:"deleted"`
+	Email    string   `json:"email"`
+	Name     string   `json:"name"`
+	Client   int      `json:"client"`
+	Company  string   `json:"company"`
+	Lang     string   `json:"lang"`
+	Phone    string   `json:"phone"`
+	Reseller int      `json:"reseller,omitempty"`
+	Groups   []*Group `json:"groups"`
 }
 
 type Group struct {

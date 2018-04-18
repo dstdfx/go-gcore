@@ -72,7 +72,7 @@ var (
 		UpdatedAt: NewGCoreTime(time.Date(2018, 4, 9, 11, 32, 31, 0, time.UTC)),
 	}
 
-	listResourcesExpected = &[]Resource{*getResourceExpected}
+	listResourcesExpected = []*Resource{getResourceExpected}
 
 	createResourceExpected = getResourceExpected
 )

@@ -35,20 +35,20 @@ type CreateResourceBody struct {
 	SecondaryHostnames []string `json:"secondaryHostnames"`
 }
 
-func (s *ResourcesService) List(ctx context.Context) (*[]Resource, *http.Response, error) {
+func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", resourcesURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	resources := make([]Resource, 0)
+	resources := make([]*Resource, 0)
 
 	resp, err := s.client.Do(req, &resources)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return &resources, resp, nil
+	return resources, resp, nil
 }
 
 func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, *http.Response, error) {

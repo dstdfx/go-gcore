@@ -40,20 +40,20 @@ type CreateOriginGroupBody struct {
 	Origins []Origin `json:"origins"`
 }
 
-func (s *OriginGroupsService) List(ctx context.Context) (*[]OriginGroup, *http.Response, error) {
+func (s *OriginGroupsService) List(ctx context.Context) ([]*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", originGroupsURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	originGroups := make([]OriginGroup, 0)
+	originGroups := make([]*OriginGroup, 0)
 
 	resp, err := s.client.Do(req, &originGroups)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return &originGroups, resp, nil
+	return originGroups, resp, nil
 }
 
 func (s *OriginGroupsService) Get(ctx context.Context, originGroupID int) (*OriginGroup, *http.Response, error) {

@@ -82,7 +82,7 @@ var (
 		OriginIDs: []Origin{{ID: 9257, Source: "whatever.ru", Enabled: true, Backup: false}},
 	}
 
-	listOriginGroupExpected = &[]OriginGroup{*getOriginGroupExpected}
+	listOriginGroupExpected = []*OriginGroup{getOriginGroupExpected}
 
 	createOriginGroupExpected = getOriginGroupExpected
 
@@ -101,7 +101,7 @@ func TestOriginGroupsService_Create(t *testing.T) {
 
 	Mux.HandleFunc(originGroupsURL,
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(createOriginGroupResp))
+			w.Write([]byte(listOriginGroupReps))
 		})
 
 	client := GetAuthenticatedCommonClient()

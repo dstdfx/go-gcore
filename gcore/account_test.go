@@ -34,7 +34,7 @@ var (
      `
 	// Expected result
 	accountDetaildExpected = &Account{CurrentUser: 511, ID: 505, Users: []User{{Client: 5, Company: "Your company", Deleted: false, Email: "user@yourcompany.com",
-		ID: 513, Lang: "en", Name: "user", Phone: "+79882233443", Groups: []Group{{ID: 2, Name: "users"}}}}}
+		ID: 513, Lang: "en", Name: "user", Phone: "+79882233443", Groups: []*Group{{ID: 2, Name: "users"}}}}}
 )
 
 func TestAccountService_Details(t *testing.T) {
