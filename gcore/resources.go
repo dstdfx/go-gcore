@@ -22,11 +22,11 @@ type Resource struct {
 	Status             string     `json:"status"`
 	Client             int        `json:"client"`
 	OriginGroup        int        `json:"originGroup"`
-	Origin             string     `json:"origin"`
 	CName              string     `json:"cname"`
 	SecondaryHostnames []string   `json:"secondaryHostnames"`
 	CreatedAt          *GCoreTime `json:"created"`
 	UpdatedAt          *GCoreTime `json:"updated"`
+	// TODO: Options, Rules, sslData, sslEnabled
 }
 
 type CreateResourceBody struct {

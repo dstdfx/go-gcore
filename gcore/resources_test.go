@@ -19,7 +19,6 @@ var (
     "deleted": false,
     "enabled": true,
     "id": 220,
-    "origin": "example.com",
     "originGroup": 80,
     "secondaryHostnames": [
         "cdn1.yoursite.com",
@@ -40,7 +39,6 @@ var (
         "deleted": false,
         "enabled": true,
         "id": 220,
-        "origin": "example.com",
         "originGroup": 80,
         "secondaryHostnames": [
             "cdn1.yoursite.com",
@@ -61,7 +59,6 @@ var (
 		CompanyName: "Your Company",
 		Deleted:     false,
 		Enabled:     true,
-		Origin:      "example.com",
 		OriginGroup: 80,
 		SecondaryHostnames: []string{
 			"cdn1.yoursite.com",
@@ -133,8 +130,7 @@ func TestResourcesService_Create(t *testing.T) {
 		})
 
 	resourceBody := CreateResourceBody{
-		CName:  "cdn.site.com",
-		Origin: "example.com",
+		CName: "cdn.site.com",
 		SecondaryHostnames: []string{
 			"cdn1.yoursite.com",
 			"cdn2.yoursite.com",
