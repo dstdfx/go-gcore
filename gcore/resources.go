@@ -83,8 +83,13 @@ func (s *ResourcesService) Create(ctx context.Context, body CreateResourceBody) 
 	return resource, resp, nil
 }
 
-func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths map[string]string) (*http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "POST", resourcePurgeURL, paths)
+func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths []string) (*http.Response, error) {
+	var pathsBody struct {
+		Paths []string `json:"paths"`
+	}
+	pathsBody.Paths = paths
+
+	req, err := s.client.NewRequest(ctx, "POST", fmt.Sprintf(resourcePurgeURL, resourceID), pathsBody)
 	if err != nil {
 		return nil, err
 	}

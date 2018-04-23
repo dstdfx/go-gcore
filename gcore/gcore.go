@@ -190,6 +190,8 @@ func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
 		return nil, err
 	}
 
+	c.log.Debugf("[go-gcore] RESP   %v %v %v", req.Method, req.URL, resp.StatusCode)
+
 	if resp.StatusCode >= 400 && resp.StatusCode <= 599 {
 		gcoreErr := &GCoreError{Code: resp.StatusCode}
 
@@ -218,7 +220,6 @@ func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
 		}
 	}
 
-	c.log.Debugf("[go-gcore] RESP   %v %v %v", req.Method, req.URL, resp.StatusCode)
 	return resp, nil
 }
 
