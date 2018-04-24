@@ -1,4 +1,4 @@
-package gcore
+package testutils
 
 import (
 	"context"
@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"testing"
+
+	"github.com/dstdfx/go-gcore/gcore"
 )
 
 var (
@@ -20,7 +21,7 @@ var (
 
 	FakeTokenExpireDate = "2017-04-17T01:28:15.000Z"
 
-	FakeAuthOpts = AuthOptions{Username: "whatever", Password: "whatever"}
+	FakeAuthOpts = gcore.AuthOptions{Username: "whatever", Password: "whatever"}
 )
 
 // SetupHTTP prepares the Mux and Server.
@@ -41,7 +42,7 @@ func Endpoint() string {
 
 // Setup endpoints for getting GCore token
 func SetupGCoreAuthServer() {
-	Mux.HandleFunc(loginURL, func(w http.ResponseWriter, r *http.Request) {
+	Mux.HandleFunc(gcore.LoginURL, func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `{
 			"token": "%s",
 			"expire": "%s"
@@ -58,54 +59,15 @@ func MockClientURL() *url.URL {
 	}
 }
 
-func TestNewCommonClient(t *testing.T) {
-	SetupHTTP()
-	defer TeardownHTTP()
-
-	SetupGCoreAuthServer()
-
-	common := NewCommonClient(nil)
-	common.BaseURL = MockClientURL()
-
-	err := common.Authenticate(context.Background(), FakeAuthOpts)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if common.Token.Value != FakeToken {
-		t.Errorf("Expected: %s, got %s", FakeToken, common.Token.Value)
-	}
-}
-
-func TestNewResellerClient(t *testing.T) {
-	SetupHTTP()
-	defer TeardownHTTP()
-
-	SetupGCoreAuthServer()
-
-	reseller := NewResellerClient(nil)
-	reseller.BaseURL = MockClientURL()
-
-	err := reseller.Authenticate(context.Background(), FakeAuthOpts)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if reseller.Token.Value != FakeToken {
-		t.Errorf("Expected: %s, got %s", FakeToken, reseller.Token.Value)
-	}
-
-}
-
-func GetAuthenticatedCommonClient() *CommonClient {
-	common := NewCommonClient(nil)
+func GetAuthenticatedCommonClient() *gcore.CommonClient {
+	common := gcore.NewCommonClient(nil)
 	common.BaseURL = MockClientURL()
 	common.Authenticate(context.Background(), FakeAuthOpts)
 	return common
 }
 
-func GetAuthenticatedResellerClient() *ResellerClient {
-	resell := NewResellerClient(nil)
+func GetAuthenticatedResellerClient() *gcore.ResellerClient {
+	resell := gcore.NewResellerClient(nil)
 	resell.BaseURL = MockClientURL()
 	resell.Authenticate(context.Background(), FakeAuthOpts)
 	return resell

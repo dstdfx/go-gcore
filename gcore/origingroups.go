@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	originGroupsURL = "/originGroups"
-	originGroupURL  = "/originGroups/%d"
+	OriginGroupsURL = "/originGroups"
+	OriginGroupURL  = "/originGroups/%d"
 )
 
 type OriginGroupsService service
@@ -41,7 +41,7 @@ type CreateOriginGroupBody struct {
 }
 
 func (s *OriginGroupsService) List(ctx context.Context) ([]*OriginGroup, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", originGroupsURL, nil)
+	req, err := s.client.NewRequest(ctx, "GET", OriginGroupsURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -57,7 +57,7 @@ func (s *OriginGroupsService) List(ctx context.Context) ([]*OriginGroup, *http.R
 }
 
 func (s *OriginGroupsService) Get(ctx context.Context, originGroupID int) (*OriginGroup, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(originGroupURL, originGroupID), nil)
+	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(OriginGroupURL, originGroupID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -73,7 +73,7 @@ func (s *OriginGroupsService) Get(ctx context.Context, originGroupID int) (*Orig
 }
 
 func (s *OriginGroupsService) Create(ctx context.Context, body CreateOriginGroupBody) (*OriginGroup, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "POST", originGroupsURL, body)
+	req, err := s.client.NewRequest(ctx, "POST", OriginGroupsURL, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -89,7 +89,7 @@ func (s *OriginGroupsService) Create(ctx context.Context, body CreateOriginGroup
 }
 
 func (s *OriginGroupsService) Update(ctx context.Context, originGroupID int, body UpdateOriginGroupBody) (*OriginGroup, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "PUT", fmt.Sprintf(originGroupURL, originGroupID), body)
+	req, err := s.client.NewRequest(ctx, "PUT", fmt.Sprintf(OriginGroupURL, originGroupID), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -105,7 +105,7 @@ func (s *OriginGroupsService) Update(ctx context.Context, originGroupID int, bod
 }
 
 func (s *OriginGroupsService) Delete(ctx context.Context, originGroupID int) (*http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "DELETE", fmt.Sprintf(originGroupURL, originGroupID), nil)
+	req, err := s.client.NewRequest(ctx, "DELETE", fmt.Sprintf(OriginGroupURL, originGroupID), nil)
 	if err != nil {
 		return nil, err
 	}

@@ -7,15 +7,16 @@ import (
 )
 
 const (
-	resourcesURL     = "/resources"
-	resourceURL      = "/resources/%d"
-	resourcePurgeURL = "/resources/%d/purge"
+	ResourcesURL     = "/resources"
+	ResourceURL      = "/resources/%d"
+	ResourcePurgeURL = "/resources/%d/purge"
 )
 
 type ResourcesService service
 
 type Resource struct {
 	ID                 int        `json:"id"`
+	Name               *string    `json:"name"`
 	Deleted            bool       `json:"deleted"`
 	Enabled            bool       `json:"enabled"`
 	CompanyName        string     `json:"companyName"`
@@ -24,9 +25,13 @@ type Resource struct {
 	OriginGroup        int        `json:"originGroup"`
 	CName              string     `json:"cname"`
 	SecondaryHostnames []string   `json:"secondaryHostnames"`
+	Options            *Options   `json:"options"`
+	OriginProtocol     string     `json:"originProtocol"`
+	Rules              []Rule     `json:"rules"`
 	CreatedAt          *GCoreTime `json:"created"`
 	UpdatedAt          *GCoreTime `json:"updated"`
-	// TODO: Options, Rules, sslData, sslEnabled
+	SSLData            *int       `json:"sslData"`
+	SSLEnabled         bool       `json:"sslEnabled"`
 }
 
 type CreateResourceBody struct {
@@ -36,7 +41,7 @@ type CreateResourceBody struct {
 }
 
 func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", resourcesURL, nil)
+	req, err := s.client.NewRequest(ctx, "GET", ResourcesURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -52,7 +57,7 @@ func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Respons
 }
 
 func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(resourceURL, resourceID), nil)
+	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(ResourceURL, resourceID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -68,7 +73,7 @@ func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, 
 }
 
 func (s *ResourcesService) Create(ctx context.Context, body CreateResourceBody) (*Resource, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "POST", resourcesURL, body)
+	req, err := s.client.NewRequest(ctx, "POST", ResourcesURL, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -89,7 +94,7 @@ func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths []st
 	}
 	pathsBody.Paths = paths
 
-	req, err := s.client.NewRequest(ctx, "POST", fmt.Sprintf(resourcePurgeURL, resourceID), pathsBody)
+	req, err := s.client.NewRequest(ctx, "POST", fmt.Sprintf(ResourcePurgeURL, resourceID), pathsBody)
 	if err != nil {
 		return nil, err
 	}

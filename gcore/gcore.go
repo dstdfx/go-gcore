@@ -17,11 +17,11 @@ import (
 )
 
 const (
-	libraryVersion = "0.0.1"
-	defaultBaseURL = "https://api.gcdn.co"
-	userAgent      = "go-gcore/" + libraryVersion
+	LibraryVersion = "0.0.1"
+	DefaultBaseURL = "https://api.gcdn.co"
+	UserAgent      = "go-gcore/" + LibraryVersion
 
-	loginURL = "/auth/signin"
+	LoginURL = "/auth/signin"
 )
 
 // Client manages communication with G-Core CDN API
@@ -84,7 +84,7 @@ type Token struct {
 }
 
 func (c *Client) Authenticate(ctx context.Context, authOpts AuthOptions) error {
-	req, err := c.NewRequest(ctx, "POST", loginURL, authOpts)
+	req, err := c.NewRequest(ctx, "POST", LoginURL, authOpts)
 	if err != nil {
 		return err
 	}
@@ -108,13 +108,13 @@ func NewCommonClient(httpClient *http.Client) *CommonClient {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
-	baseURL, _ := url.Parse(defaultBaseURL)
+	baseURL, _ := url.Parse(DefaultBaseURL)
 
 	logger := log.New()
 	logger.Level = log.StandardLogger().Level
 	logger.Formatter = log.StandardLogger().Formatter
 
-	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: userAgent, log: logger}
+	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: UserAgent, log: logger}
 	c.common.client = c
 
 	commonServices := CommonServices{}
@@ -131,13 +131,13 @@ func NewResellerClient(httpClient *http.Client) *ResellerClient {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
-	baseURL, _ := url.Parse(defaultBaseURL)
+	baseURL, _ := url.Parse(DefaultBaseURL)
 
 	logger := log.New()
 	logger.Level = log.StandardLogger().Level
 	logger.Formatter = log.StandardLogger().Formatter
 
-	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: userAgent, log: logger}
+	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: UserAgent, log: logger}
 	c.common.client = c
 
 	resellerServices := ResellerServices{}
@@ -254,4 +254,12 @@ func addOptions(s string, opt interface{}) (string, error) {
 
 	u.RawQuery = qs.Encode()
 	return u.String(), nil
+}
+
+func IntPtr(v int) *int {
+	return &v
+}
+
+func StringPtr(v string) *string {
+	return &v
 }

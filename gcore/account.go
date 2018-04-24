@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-var accountDetailsURL = "/clients/me"
+var AccountDetailsURL = "/clients/me"
 
 type AccountService service
 
@@ -40,7 +40,7 @@ type Group struct {
 
 func (s *AccountService) Details(ctx context.Context) (*Account, *http.Response, error) {
 
-	req, err := s.client.NewRequest(ctx, "GET", accountDetailsURL, nil)
+	req, err := s.client.NewRequest(ctx, "GET", AccountDetailsURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
