@@ -62,5 +62,11 @@ if err != nil {
 fmt.Printf("%+v\n", clients)
 ```
 
+## TODO ##
+- SSL
+- Rules
+- Rule templates
+- Origins
+
 ## License ##
 This library is distributed under the MIT license found in the [LICENSE](./LICENSE) file.
