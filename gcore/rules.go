@@ -1,5 +1,16 @@
 package gcore
 
+import (
+	"context"
+	"fmt"
+	"net/http"
+)
+
+const (
+	RulesURL = "/resources/%d/rules"
+	RuleURL  = "/resources/%d/rules/%d"
+)
+
 type RulesService service
 
 // Rule represent G-Core's rule for CDN Resource.
@@ -39,6 +50,13 @@ type Options struct {
 	Stale                *Stale                `json:"stale"`
 	StaticHeaders        *StaticHeaders        `json:"staticHeaders"`
 	UserAgentACL         *UserAgentACL         `json:"user_agent_acl"`
+}
+
+type CreateRuleBody struct {
+	Rule     string  `json:"rule"`
+	Name     string  `json:"name"`
+	RuleType int     `json:"ruleType"`
+	Options  Options `json:"options"`
 }
 
 // List HTTP Headers that must be included in the response.
@@ -209,4 +227,70 @@ type UserAgentACL struct {
 	Enabled        bool     `json:"enabled"`
 	ExceptedValues []string `json:"excepted_values"`
 	PolicyType     string   `json:"policy_type"`
+}
+
+// Get list of the Rules for given CDN Resource
+func (s *RulesService) List(ctx context.Context, resourceID int) ([]*Rule, *http.Response, error) {
+	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(RulesURL, resourceID), nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	rules := make([]*Rule, 0)
+
+	resp, err := s.client.Do(req, &rules)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return rules, resp, nil
+}
+
+// Create Rule for specific CDN Resource
+func (s *RulesService) Create(ctx context.Context, resourceID int, body CreateRuleBody) (*Rule, *http.Response, error) {
+	req, err := s.client.NewRequest(ctx, "POST", fmt.Sprintf(RulesURL, resourceID), body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	rule := &Rule{}
+
+	resp, err := s.client.Do(req, rule)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return rule, resp, nil
+}
+
+// Get specific Rule for specific CDN Resource
+func (s *RulesService) Get(ctx context.Context, resourceID int, ruleID int) (*Rule, *http.Response, error) {
+	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(RuleURL, resourceID, ruleID), nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	rule := &Rule{}
+
+	resp, err := s.client.Do(req, rule)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return rule, resp, nil
+}
+
+// Delete specific Rule for specific CDN Resource
+func (s *RulesService) Delete(ctx context.Context, resourceID int, ruleID int) (*http.Response, error) {
+	req, err := s.client.NewRequest(ctx, "DELETE", fmt.Sprintf(RuleURL, resourceID, ruleID), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := s.client.Do(req, nil)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, nil
 }

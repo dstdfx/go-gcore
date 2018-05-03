@@ -64,7 +64,6 @@ fmt.Printf("%+v\n", clients)
 
 ## TODO ##
 - SSL
-- Rules
 - Rule templates
 - Origins
 
