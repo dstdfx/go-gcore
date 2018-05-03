@@ -17,6 +17,7 @@ const (
 
 type ClientsService service
 
+// ClientAccount represents G-Core's client account.
 type ClientAccount struct {
 	ID               int        `json:"id"`
 	Client           int        `json:"client"`
@@ -59,6 +60,7 @@ type ListOpts struct {
 	Activated   bool   `url:"activated,omitempty"`
 }
 
+// Create a new client, the client will be activated automatically.
 func (s *ClientsService) Create(ctx context.Context, body CreateClientBody) (*ClientAccount, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "POST", ResellUsersURL, body)
 	if err != nil {
@@ -75,6 +77,7 @@ func (s *ClientsService) Create(ctx context.Context, body CreateClientBody) (*Cl
 	return clientAccount, resp, nil
 }
 
+// Get data of a client by ID.
 func (s *ClientsService) Get(ctx context.Context, clientID int) (*ClientAccount, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(ResellClientURL, clientID), nil)
 	if err != nil {
@@ -91,6 +94,7 @@ func (s *ClientsService) Get(ctx context.Context, clientID int) (*ClientAccount,
 	return clientAccount, resp, nil
 }
 
+// Get a list of all Clients assigned to a Reseller.
 func (s *ClientsService) List(ctx context.Context, opts ListOpts) ([]*ClientAccount, *http.Response, error) {
 	url, err := addOptions(ResellClientsURL, opts)
 	if err != nil {
@@ -112,6 +116,7 @@ func (s *ClientsService) List(ctx context.Context, opts ListOpts) ([]*ClientAcco
 	return clients, resp, nil
 }
 
+// Edit data of the client.
 func (s *ClientsService) Update(ctx context.Context, clientID int, body UpdateClientBody) (*ClientAccount, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(ResellClientURL, clientID), body)
 	if err != nil {
@@ -128,6 +133,9 @@ func (s *ClientsService) Update(ctx context.Context, clientID int, body UpdateCl
 	return client, resp, nil
 }
 
+// This feature has been taken from the admin web-panel, is not documented at all
+// It allows to authenticate as a user (common client), common client can manage
+// his own CDN resources, origins and etc.
 func (s *ClientsService) GetCommonClient(ctx context.Context, userID int) (*CommonClient, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(ResellUserTokenURL, userID), nil)
 	if err != nil {
@@ -152,8 +160,8 @@ type PaidService struct {
 	Name string `json:"name"`
 }
 
-// This feature has been taken from the admin web-panel, is not documented at all
-// It allows to pause CDN service for specific client
+// This feature has been taken from the admin web-panel, is not documented at all.
+// It allows to pause CDN service for specific client.
 func (s *ClientsService) SuspendCDN(ctx context.Context, clientID int) (*http.Response, error) {
 	url, _ := addOptions(fmt.Sprintf(ResellClientServicesURL, clientID), struct {
 		Name string `url:"name"`
@@ -190,8 +198,8 @@ func (s *ClientsService) SuspendCDN(ctx context.Context, clientID int) (*http.Re
 	return resp, nil
 }
 
-// This feature has been taken from the admin web-panel, is not documented at all
-// It allows to resume CDN service for specific client
+// This feature has been taken from the admin web-panel, is not documented at all.
+// It allows to resume CDN service for specific client.
 func (s *ClientsService) ResumeCDN(ctx context.Context, clientID int) (*http.Response, error) {
 	url, _ := addOptions(fmt.Sprintf(ResellClientServicesURL, clientID), struct {
 		Name string `url:"name"`

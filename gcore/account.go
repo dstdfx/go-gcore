@@ -5,21 +5,23 @@ import (
 	"net/http"
 )
 
-var AccountDetailsURL = "/clients/me"
+const AccountDetailsURL = "/clients/me"
 
 type AccountService service
 
+// Account represents G-Core's account info.
 type Account struct {
 	// Your account ID
 	ID int `json:"id"`
 
-	// ID of user who requested information
+	// ID of user who requested information.
 	CurrentUser int `json:"currentUser"`
 
-	// An array which contains information about all users of the requested account
+	// An array which contains information about all users of the requested account.
 	Users []User `json:"users"`
 }
 
+// User represents G-Core's user.
 type User struct {
 	ID       int      `json:"id"`
 	Deleted  bool     `json:"deleted"`
@@ -33,11 +35,13 @@ type User struct {
 	Groups   []*Group `json:"groups"`
 }
 
+// Group represents G-Core's users group.
 type Group struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
+// Get details info for the account.
 func (s *AccountService) Details(ctx context.Context) (*Account, *http.Response, error) {
 
 	req, err := s.client.NewRequest(ctx, "GET", AccountDetailsURL, nil)

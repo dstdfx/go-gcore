@@ -24,24 +24,24 @@ const (
 	LoginURL = "/auth/signin"
 )
 
-// Client manages communication with G-Core CDN API
+// Client manages communication with G-Core CDN API.
 type Client struct {
 	sync.Mutex
 
-	// HTTP client used to communicate with the GC API
+	// HTTP client used to communicate with the GC API.
 	client *http.Client
 
-	// Base URL for API requests
+	// Base URL for API requests.
 	BaseURL *url.URL
 
-	// User agent for client
+	// User agent for client.
 	UserAgent string
 
 	log *log.Logger
 
 	common service
 
-	// Token to communicate with G-Core API
+	// Token to communicate with G-Core API.
 	Token *Token
 }
 
@@ -49,40 +49,44 @@ type service struct {
 	client *Client
 }
 
-// CommonClient represents API of basic G-Core account
+// CommonClient represents API of basic G-Core account.
 type CommonClient struct {
 	*Client
 	CommonServices
 }
 
-// ResellerClient represents API of reseller G-Core account
+// ResellerClient represents API of reseller G-Core account.
 type ResellerClient struct {
 	*Client
 	ResellerServices
 }
 
-// CommonServices represent specific account type features
+// CommonServices represent specific account type features.
 type CommonServices struct {
 	Account      *AccountService
 	Resources    *ResourcesService
 	OriginGroups *OriginGroupsService
 }
 
-// ResellerServices represent specific account type features
+// ResellerServices represent specific account type features.
 type ResellerServices struct {
 	Clients *ClientsService
 }
 
+// G-Core account credentials.
 type AuthOptions struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
+// Token to access G-Core API.
 type Token struct {
 	Value  string     `json:"token"`
 	Expire *GCoreTime `json:"expire"`
 }
 
+// Authenticate gets API Token, if client already took a token, check if it's valid.
+// If it's not, get new one.
 func (c *Client) Authenticate(ctx context.Context, authOpts AuthOptions) error {
 	req, err := c.NewRequest(ctx, "POST", LoginURL, authOpts)
 	if err != nil {
@@ -104,6 +108,7 @@ func (c *Client) Authenticate(ctx context.Context, authOpts AuthOptions) error {
 	return nil
 }
 
+// NewCommonClient creates basic G-Core client.
 func NewCommonClient(httpClient *http.Client) *CommonClient {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
@@ -127,6 +132,7 @@ func NewCommonClient(httpClient *http.Client) *CommonClient {
 	return commonClient
 }
 
+// NewResellerClient creates reseller G-Core client.
 func NewResellerClient(httpClient *http.Client) *ResellerClient {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
@@ -223,6 +229,7 @@ func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
 	return resp, nil
 }
 
+// ExtractResult reads response body and unmarshal it to given interface
 func ExtractResult(resp *http.Response, to interface{}) error {
 	body, err := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()

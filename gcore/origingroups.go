@@ -13,6 +13,7 @@ var (
 
 type OriginGroupsService service
 
+// Origin represents G-Core's origin.
 type Origin struct {
 	ID      int    `json:"id,omitempty"`
 	Enabled bool   `json:"enabled,omitempty"`
@@ -20,6 +21,7 @@ type Origin struct {
 	Source  string `json:"source"`
 }
 
+// Origin represents G-Core's origin group.
 type OriginGroup struct {
 	ID        int      `json:"id"`
 	Name      string   `json:"name"`
@@ -40,6 +42,7 @@ type CreateOriginGroupBody struct {
 	Origins []Origin `json:"origins"`
 }
 
+// Get information about Origins Groups and Origin Sources.
 func (s *OriginGroupsService) List(ctx context.Context) ([]*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", OriginGroupsURL, nil)
 	if err != nil {
@@ -56,6 +59,7 @@ func (s *OriginGroupsService) List(ctx context.Context) ([]*OriginGroup, *http.R
 	return originGroups, resp, nil
 }
 
+// Get origins group info.
 func (s *OriginGroupsService) Get(ctx context.Context, originGroupID int) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(OriginGroupURL, originGroupID), nil)
 	if err != nil {
@@ -72,6 +76,7 @@ func (s *OriginGroupsService) Get(ctx context.Context, originGroupID int) (*Orig
 	return originGroup, resp, nil
 }
 
+// Create origin group.
 func (s *OriginGroupsService) Create(ctx context.Context, body CreateOriginGroupBody) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "POST", OriginGroupsURL, body)
 	if err != nil {
@@ -88,6 +93,7 @@ func (s *OriginGroupsService) Create(ctx context.Context, body CreateOriginGroup
 	return originGroup, resp, nil
 }
 
+// Update origin group info.
 func (s *OriginGroupsService) Update(ctx context.Context, originGroupID int, body UpdateOriginGroupBody) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "PUT", fmt.Sprintf(OriginGroupURL, originGroupID), body)
 	if err != nil {
@@ -104,6 +110,7 @@ func (s *OriginGroupsService) Update(ctx context.Context, originGroupID int, bod
 	return originGroup, resp, nil
 }
 
+// Delete origin group.
 func (s *OriginGroupsService) Delete(ctx context.Context, originGroupID int) (*http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "DELETE", fmt.Sprintf(OriginGroupURL, originGroupID), nil)
 	if err != nil {

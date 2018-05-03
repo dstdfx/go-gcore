@@ -2,6 +2,7 @@ package gcore
 
 import "fmt"
 
+// GCoreError represents G-Core API error.
 type GCoreError struct {
 	Code    int                  `json:"-"`
 	Errors  *map[string][]string `json:"errors"`

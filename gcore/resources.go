@@ -14,6 +14,7 @@ const (
 
 type ResourcesService service
 
+// Resource represents G-Core's CDN Resource.
 type Resource struct {
 	ID                 int        `json:"id"`
 	Name               *string    `json:"name"`
@@ -40,6 +41,7 @@ type CreateResourceBody struct {
 	SecondaryHostnames []string `json:"secondaryHostnames"`
 }
 
+// Get information about all CDN Resources for this account.
 func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", ResourcesURL, nil)
 	if err != nil {
@@ -56,6 +58,7 @@ func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Respons
 	return resources, resp, nil
 }
 
+// Get information about specific CDN Resource.
 func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(ResourceURL, resourceID), nil)
 	if err != nil {
@@ -72,6 +75,7 @@ func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, 
 	return resource, resp, nil
 }
 
+// Create CDN Resource.
 func (s *ResourcesService) Create(ctx context.Context, body CreateResourceBody) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "POST", ResourcesURL, body)
 	if err != nil {
@@ -88,6 +92,7 @@ func (s *ResourcesService) Create(ctx context.Context, body CreateResourceBody) 
 	return resource, resp, nil
 }
 
+// Purge deletes cache from CDN servers. It is necessary for updating CDN content.
 func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths []string) (*http.Response, error) {
 	var pathsBody struct {
 		Paths []string `json:"paths"`
