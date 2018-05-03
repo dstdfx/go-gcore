@@ -11,6 +11,62 @@ import (
 	th "github.com/dstdfx/go-gcore/tests/testutils"
 )
 
+func TestClientsService_Create(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.SetupGCoreAuthServer()
+
+	th.Mux.HandleFunc(gcore.ResellUsersURL,
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte(TestCreateClientResponse))
+		})
+
+	resell := th.GetAuthenticatedResellerClient()
+
+	body := gcore.CreateClientBody{
+		UserType: "common",
+		Name:     "Client 2 Name",
+		Company:  "Client 2 Company Name",
+		Phone:    "Client 2 Company Phone",
+		Email:    "common2@gcore.lu",
+		Password: "123123123qwe",
+	}
+
+	got, _, err := resell.Clients.Create(context.Background(), body)
+	expected := TestCreateClientExpected
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("Expected: %+v, got %+v\n", expected, got)
+	}
+}
+
+func TestClientService_Get(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.SetupGCoreAuthServer()
+
+	th.Mux.HandleFunc(fmt.Sprintf(gcore.ResellClientURL, TestGetClientExpected.ID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte(TestGetClientResponse))
+		})
+	resell := th.GetAuthenticatedResellerClient()
+
+	got, _, err := resell.Clients.Get(context.Background(), TestGetClientExpected.ID)
+	expected := TestGetClientExpected
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("Expected: %+v, got %+v\n", expected, got)
+	}
+}
+
 func TestClientsService_List(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
