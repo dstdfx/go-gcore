@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check if Go files have bad code format.
-gofmt_diff="$(gofmt -d -s .)"
+gofmt_diff="$(gofmt -d -s ./gcore)"
 if [[ -n "${gofmt_diff}" ]]; then
   echo "${gofmt_diff}"
   exit 1
