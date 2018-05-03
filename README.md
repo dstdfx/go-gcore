@@ -1,4 +1,6 @@
 # go-gcore
+[![Build Status](https://travis-ci.org/dstdfx/go-gcore.svg?branch=master)](https://travis-ci.org/dstdfx/go-gcore)  
+
 Unofficial Go library for accessing the G-Core CDN API
 
 It contains some parts of common and reseller G-Core CDN API.
