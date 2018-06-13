@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/google/go-querystring/query"
-	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -37,7 +36,7 @@ type Client struct {
 	// User agent for client.
 	UserAgent string
 
-	log *log.Logger
+	log GenericLogger
 
 	common service
 
@@ -111,17 +110,13 @@ func (c *Client) Authenticate(ctx context.Context, authOpts AuthOptions) error {
 }
 
 // NewCommonClient creates basic G-Core client.
-func NewCommonClient(httpClient *http.Client) *CommonClient {
+func NewCommonClient(httpClient *http.Client, logger ...GenericLogger) *CommonClient {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
 	baseURL, _ := url.Parse(DefaultBaseURL)
 
-	logger := log.New()
-	logger.Level = log.StandardLogger().Level
-	logger.Formatter = log.StandardLogger().Formatter
-
-	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: UserAgent, log: logger}
+	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: UserAgent, log: SelectLogger(logger...)}
 	c.common.client = c
 
 	commonServices := CommonServices{}
@@ -131,28 +126,24 @@ func NewCommonClient(httpClient *http.Client) *CommonClient {
 	commonServices.Rules = (*RulesService)(&c.common)
 	commonServices.Certificates = (*CertService)(&c.common)
 
-	commonClient := &CommonClient{c, commonServices}
+	commonClient := &CommonClient{Client: c, CommonServices: commonServices}
 
 	return commonClient
 }
 
 // NewResellerClient creates reseller G-Core client.
-func NewResellerClient(httpClient *http.Client) *ResellerClient {
+func NewResellerClient(httpClient *http.Client, logger ...GenericLogger) *ResellerClient {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
 	baseURL, _ := url.Parse(DefaultBaseURL)
 
-	logger := log.New()
-	logger.Level = log.StandardLogger().Level
-	logger.Formatter = log.StandardLogger().Formatter
-
-	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: UserAgent, log: logger}
+	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: UserAgent, log: SelectLogger(logger...)}
 	c.common.client = c
 
 	resellerServices := ResellerServices{}
 	resellerServices.Clients = (*ClientsService)(&c.common)
-	resellClient := &ResellerClient{c, resellerServices}
+	resellClient := &ResellerClient{Client: c, ResellerServices: resellerServices}
 
 	return resellClient
 }
@@ -193,14 +184,15 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 }
 
 func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
-	c.log.Debugf("[go-gcore] REQ  %v %v", req.Method, req.URL)
+	c.log.Debugf("REQ  %v %v", req.Method, req.URL)
 
 	resp, err := c.client.Do(req)
 	if err != nil {
+		c.log.Errorf("Request failed with error: %s", err)
 		return nil, err
 	}
 
-	c.log.Debugf("[go-gcore] RESP   %v %v %v", req.Method, req.URL, resp.StatusCode)
+	c.log.Debugf("RESP   %v %v %v", req.Method, req.URL, resp.StatusCode)
 
 	if resp.StatusCode >= 400 && resp.StatusCode <= 599 {
 		gcoreErr := &GCoreError{Code: resp.StatusCode}

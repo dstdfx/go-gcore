@@ -149,7 +149,7 @@ func (s *ClientsService) GetCommonClient(ctx context.Context, userID int) (*Comm
 		return nil, resp, err
 	}
 
-	commonClient := NewCommonClient(s.client.client)
+	commonClient := NewCommonClient(s.client.client, s.client.log)
 	commonClient.Token = token
 
 	return commonClient, resp, nil
