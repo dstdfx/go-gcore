@@ -38,7 +38,7 @@ type Resource struct {
 type CreateResourceBody struct {
 	CName              string   `json:"cname"`
 	Origin             string   `json:"origin"`
-	SecondaryHostnames []string `json:"secondaryHostnames"`
+	SecondaryHostnames []string `json:"secondaryHostnames,omitempty"`
 }
 
 // Get information about all CDN Resources for this account.

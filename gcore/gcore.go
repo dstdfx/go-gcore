@@ -163,6 +163,8 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		if err != nil {
 			return nil, err
 		}
+		b, _ := json.Marshal(body)
+		c.log.Debugf("REQ BODY %s", string(b))
 	}
 
 	req, err := http.NewRequest(method, u.String(), buf)
@@ -202,7 +204,6 @@ func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
 			defer resp.Body.Close()
 
 			err = json.Unmarshal(body, gcoreErr)
-
 			if err != nil {
 				err = fmt.Errorf("gcore: got the %d error status code from the server", resp.StatusCode)
 				return resp, err
