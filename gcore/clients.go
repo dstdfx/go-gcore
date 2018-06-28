@@ -118,7 +118,7 @@ func (s *ClientsService) List(ctx context.Context, opts ListOpts) ([]*ClientAcco
 
 // Edit data of the client.
 func (s *ClientsService) Update(ctx context.Context, clientID int, body UpdateClientBody) (*ClientAccount, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(ResellClientURL, clientID), body)
+	req, err := s.client.NewRequest(ctx, "PUT", fmt.Sprintf(ResellClientURL, clientID), body)
 	if err != nil {
 		return nil, nil, err
 	}

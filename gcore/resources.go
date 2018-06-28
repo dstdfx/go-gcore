@@ -19,6 +19,7 @@ type Resource struct {
 	ID                 int        `json:"id"`
 	Name               *string    `json:"name"`
 	Deleted            bool       `json:"deleted"`
+	Active             bool       `json:"active"`
 	Enabled            bool       `json:"enabled"`
 	CompanyName        string     `json:"companyName"`
 	Status             string     `json:"status"`
@@ -39,6 +40,28 @@ type CreateResourceBody struct {
 	CName              string   `json:"cname"`
 	Origin             string   `json:"origin"`
 	SecondaryHostnames []string `json:"secondaryHostnames,omitempty"`
+}
+
+type UpdateResourceBody struct {
+	Active      *bool    `json:"active,omitempty"`
+	OriginGroup int      `json:"originGroup"`
+	Options     *Options `json:"options,omitempty"`
+}
+
+func (s *ResourcesService) Update(ctx context.Context, resourceID int, body UpdateResourceBody) (*Resource, *http.Response, error) {
+	req, err := s.client.NewRequest(ctx, "PUT", fmt.Sprintf(ResourceURL, resourceID), body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	resource := &Resource{}
+
+	resp, err := s.client.Do(req, resource)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return resource, resp, nil
 }
 
 // Get information about all CDN Resources for this account.
