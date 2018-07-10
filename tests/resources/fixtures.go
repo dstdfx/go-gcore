@@ -199,6 +199,7 @@ var (
 		Enabled:            true,
 		OriginGroup:        7260,
 		OriginProtocol:     "HTTPS",
+		Active:             true,
 		SecondaryHostnames: []string{},
 		Options: &gcore.Options{
 			Slice:             nil,
@@ -249,6 +250,7 @@ var (
 		CompanyName:        "Whatever inc",
 		Deleted:            false,
 		Enabled:            true,
+		Active:             true,
 		OriginGroup:        7260,
 		OriginProtocol:     "HTTPS",
 		SecondaryHostnames: []string{},
@@ -301,6 +303,7 @@ var (
 		CompanyName:        "Whatever inc",
 		Deleted:            false,
 		Enabled:            true,
+		Active:             true,
 		OriginGroup:        7260,
 		OriginProtocol:     "HTTPS",
 		SecondaryHostnames: []string{},

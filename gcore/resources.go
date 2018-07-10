@@ -38,7 +38,8 @@ type Resource struct {
 
 type CreateResourceBody struct {
 	CName              string   `json:"cname"`
-	Origin             string   `json:"origin"`
+	Origin             string   `json:"origin,omitempty"`
+	OriginGroupId      *int     `json:"originGroup,omitempty"`
 	SecondaryHostnames []string `json:"secondaryHostnames,omitempty"`
 }
 
