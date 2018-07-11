@@ -44,9 +44,10 @@ type CreateResourceBody struct {
 }
 
 type UpdateResourceBody struct {
-	Active      *bool    `json:"active,omitempty"`
-	OriginGroup int      `json:"originGroup"`
-	Options     *Options `json:"options,omitempty"`
+	Active             *bool    `json:"active,omitempty"`
+	OriginGroup        int      `json:"originGroup"`
+	SecondaryHostnames []string `json:"secondaryHostnames,omitempty"`
+	Options            *Options `json:"options,omitempty"`
 }
 
 func (s *ResourcesService) Update(ctx context.Context, resourceID int, body UpdateResourceBody) (*Resource, *http.Response, error) {

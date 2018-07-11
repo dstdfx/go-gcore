@@ -163,8 +163,6 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		if err != nil {
 			return nil, err
 		}
-		b, _ := json.Marshal(body)
-		c.log.Debugf("REQ BODY %s", string(b))
 	}
 
 	req, err := http.NewRequest(method, u.String(), buf)
@@ -196,25 +194,22 @@ func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
 
 	c.log.Debugf("RESP   %v %v %v", req.Method, req.URL, resp.StatusCode)
 
-	if resp.StatusCode >= 400 && resp.StatusCode <= 599 {
-		gcoreErr := &GCoreError{Code: resp.StatusCode}
+	if resp.StatusCode >= http.StatusBadRequest && resp.StatusCode <= http.StatusNetworkAuthenticationRequired {
+
+		var respErr error
 
 		if resp.Body != nil {
 			body, _ := ioutil.ReadAll(resp.Body)
 			defer resp.Body.Close()
 
-			err = json.Unmarshal(body, gcoreErr)
-			if err != nil {
-				err = fmt.Errorf("gcore: got the %d error status code from the server", resp.StatusCode)
-				return resp, err
-			}
-
-			err = gcoreErr
+			c.log.Debugf("RESP BODY  %s", string(body))
+			respErr = fmt.Errorf("gcore: got the %d error status code from the server with body: %s",
+				resp.StatusCode, string(body))
 		} else {
-			err = fmt.Errorf("gcore: got the %d error status code from the server", resp.StatusCode)
+			respErr = fmt.Errorf("gcore: got the %d error status code from the server", resp.StatusCode)
 		}
 
-		return resp, err
+		return resp, respErr
 	}
 
 	if to != nil {
