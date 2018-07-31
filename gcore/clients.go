@@ -32,6 +32,7 @@ type ClientAccount struct {
 	CompanyName      string     `json:"companyName"`
 	UtilizationLevel int        `json:"utilization_level"`
 	Reseller         int        `json:"reseller"`
+	Cname            string     `json:"cname,omitempty"`
 }
 
 type CreateClientBody struct {

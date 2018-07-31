@@ -5,6 +5,7 @@ import "github.com/dstdfx/go-gcore/gcore"
 var TestAccountDetailResponse = `{
     "currentUser": 511,
     "id": 505,
+	"cname": "example.gcdn.co",
     "users": [
         {
             "client": 5,
@@ -29,6 +30,7 @@ var TestAccountDetailResponse = `{
 var TestAccountDetailExpected = &gcore.Account{
 	CurrentUser: 511,
 	ID:          505,
+	Cname:       "example.gcdn.co",
 	Users: []gcore.User{
 		{
 			Client:  5,

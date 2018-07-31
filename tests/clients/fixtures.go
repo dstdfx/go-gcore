@@ -37,7 +37,8 @@ var (
   "updated": "2018-04-09T11:32:31.000000Z",
   "companyName": "Client 2 Company Name",
   "utilization_level": 0,
-  "reseller": 1
+  "reseller": 1,
+  "cname": "example.gcdn.co"
 }`
 	TestCreateClientResponse = `{
   "id": 2,
@@ -83,7 +84,8 @@ var (
   "updated": "2018-04-09T11:32:31.000000Z",
   "companyName": "Client 2 Company Name",
   "utilization_level": 0,
-  "reseller": 1
+  "reseller": 1,
+  "cname": "example.gcdn.co"
 }]`
 	TestUpdateClientResponse = `{
   "id": 2,
@@ -167,6 +169,7 @@ var (
 		Email:            "common2@gcore.lu",
 		Phone:            "Client 2 Company Phone",
 		Name:             "Client 2 Name",
+		Cname:            "example.gcdn.co",
 	}
 
 	TestListClientsExpected = []*gcore.ClientAccount{
@@ -200,6 +203,7 @@ var (
 			Email:            "common2@gcore.lu",
 			Phone:            "Client 2 Company Phone",
 			Name:             "Client 2 Name",
+			Cname:            "example.gcdn.co",
 		},
 	}
 

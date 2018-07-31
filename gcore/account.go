@@ -19,6 +19,9 @@ type Account struct {
 
 	// An array which contains information about all users of the requested account.
 	Users []User `json:"users"`
+
+	// Hostname of the edge-server
+	Cname string `json:"cname"`
 }
 
 // User represents G-Core's user.
