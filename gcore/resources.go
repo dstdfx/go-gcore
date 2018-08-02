@@ -41,6 +41,7 @@ type CreateResourceBody struct {
 	Origin             string   `json:"origin,omitempty"`
 	OriginGroupId      *int     `json:"originGroup,omitempty"`
 	SecondaryHostnames []string `json:"secondaryHostnames,omitempty"`
+	Options            *Options `json:"options,omitempty"`
 }
 
 type UpdateResourceBody struct {
