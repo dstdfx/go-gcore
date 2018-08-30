@@ -28,7 +28,7 @@ type CertSSL struct {
 	CertSubjectCn       string     `json:"cert_subject_cn"`
 }
 
-type CreateCertBody struct {
+type AddCertBody struct {
 	Name        string `json:"name"`
 	Certificate string `json:"sslCertificate"`
 	PrivateKey  string `json:"sslPrivateKey"`
@@ -86,7 +86,7 @@ func (s *CertService) Delete(ctx context.Context, certID int) (*http.Response, e
 // Add an CertSSL certificate to deliver content via HTTPS protocol.
 // Paste all strings of the certificate(s) and the private key in one string parameter.
 // Each certificate in chain and the private key should be divided with the "\n" symbol.
-func (s *CertService) Create(ctx context.Context, body CreateCertBody) (*CertSSL, *http.Response, error) {
+func (s *CertService) Add(ctx context.Context, body AddCertBody) (*CertSSL, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, "POST", CertificatesURL, body)
 	if err != nil {
 		return nil, nil, err

@@ -11,7 +11,7 @@ import (
 	th "github.com/dstdfx/go-gcore/tests/testutils"
 )
 
-func TestSSLService_Create(t *testing.T) {
+func TestSSLService_Add(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
@@ -23,14 +23,14 @@ func TestSSLService_Create(t *testing.T) {
 			w.Write([]byte(TestCreateSSLResponse))
 		})
 
-	body := gcore.CreateCertBody{
+	body := gcore.AddCertBody{
 		Name:        "gcdn.example.me",
 		Certificate: "-----BEGIN CERTIFICATE----\nMIIDXTCCAkWgAwIBAgIJAIQqKEM2sJZYMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV\nBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\naWRnaXRzIFB0eSBMdGQwHhcNMTcwNzAzMDU1NjU1WhcNMTgwNzAzMDU1NjU1WjBF\nMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50\n-----END CERTIFICATE-----",
 		PrivateKey:  `-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDZcNCZiNNHfX2O\ndZpf12mv2rAZwqGZBAdpox0wntEPK3JciQ7ZRloLJeHuCNIJs9MidnH7Xk8zveju\nmab6HmfIzvMJAAm88OYWMFQRiYe1ggJEHMe7yYPQbtXwTqWDYdWmjPPma3Ujqqmb\nhmVX2rsYILD7cUjS+e0Ucfqx3QODQj/aujTt1rS0gFhJ0soY5m+C6VimPCx4Bjyw\n5rhtskJDRrfXxrIhVXOvSPFRyxDSfjt3win8vjhhZ3oFPWgrl9lVhn0zaB5hjDsd\n-----END PRIVATE KEY-----\n`,
 	}
 
 	client := th.GetAuthenticatedCommonClient()
-	got, _, err := client.Certificates.Create(context.Background(), body)
+	got, _, err := client.Certificates.Add(context.Background(), body)
 	if err != nil {
 		t.Fatal(err)
 	}
