@@ -69,7 +69,7 @@ func TestResourcesService_Create(t *testing.T) {
 		})
 
 	resourceBody := gcore.CreateResourceBody{
-		CName: "cdn.site.com",
+		Cname: "cdn.site.com",
 		SecondaryHostnames: []string{
 			"cdn1.yoursite.com",
 			"cdn2.yoursite.com",

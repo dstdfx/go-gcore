@@ -192,7 +192,7 @@ var (
 	TestGetResourceExpected = &gcore.Resource{
 		ID:                 4478,
 		Name:               nil,
-		CName:              "gcdn.example.me",
+		Cname:              "gcdn.example.me",
 		Client:             2096,
 		CompanyName:        "Whatever inc",
 		Deleted:            false,
@@ -236,8 +236,8 @@ var (
 		},
 		Status:     "active",
 		Rules:      []gcore.Rule{},
-		SSLEnabled: true,
-		SSLData:    gcore.IntPtr(1189),
+		SslEnabled: true,
+		SslData:    gcore.IntPtr(1189),
 		CreatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 31, 40, 0, time.UTC)),
 		UpdatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 32, 31, 0, time.UTC)),
 	}
@@ -245,7 +245,7 @@ var (
 	TestListResourcesExpected = []*gcore.Resource{{
 		ID:                 4478,
 		Name:               nil,
-		CName:              "gcdn.example.me",
+		Cname:              "gcdn.example.me",
 		Client:             2096,
 		CompanyName:        "Whatever inc",
 		Deleted:            false,
@@ -289,8 +289,8 @@ var (
 		},
 		Status:     "active",
 		Rules:      []gcore.Rule{},
-		SSLEnabled: true,
-		SSLData:    gcore.IntPtr(1189),
+		SslEnabled: true,
+		SslData:    gcore.IntPtr(1189),
 		CreatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 31, 40, 0, time.UTC)),
 		UpdatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 32, 31, 0, time.UTC)),
 	}}
@@ -298,7 +298,7 @@ var (
 	TestCreateResourceExpected = &gcore.Resource{
 		ID:                 4478,
 		Name:               nil,
-		CName:              "gcdn.example.me",
+		Cname:              "gcdn.example.me",
 		Client:             2096,
 		CompanyName:        "Whatever inc",
 		Deleted:            false,
@@ -342,8 +342,8 @@ var (
 		},
 		Status:     "active",
 		Rules:      []gcore.Rule{},
-		SSLEnabled: true,
-		SSLData:    gcore.IntPtr(1189),
+		SslEnabled: true,
+		SslData:    gcore.IntPtr(1189),
 		CreatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 31, 40, 0, time.UTC)),
 		UpdatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 32, 31, 0, time.UTC)),
 	}

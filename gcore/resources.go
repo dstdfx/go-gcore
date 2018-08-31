@@ -25,29 +25,36 @@ type Resource struct {
 	Status             string     `json:"status"`
 	Client             int        `json:"client"`
 	OriginGroup        int        `json:"originGroup"`
-	CName              string     `json:"cname"`
+	Cname              string     `json:"cname"`
 	SecondaryHostnames []string   `json:"secondaryHostnames"`
 	Options            *Options   `json:"options"`
 	OriginProtocol     string     `json:"originProtocol"`
 	Rules              []Rule     `json:"rules"`
 	CreatedAt          *GCoreTime `json:"created"`
 	UpdatedAt          *GCoreTime `json:"updated"`
-	SSLData            *int       `json:"sslData"`
-	SSLEnabled         bool       `json:"sslEnabled"`
+	SslData            *int       `json:"sslData"`
+	SslEnabled         bool       `json:"sslEnabled"`
 }
 
 type CreateResourceBody struct {
-	CName              string   `json:"cname"`
+	Cname              string   `json:"cname"`
 	Origin             string   `json:"origin,omitempty"`
 	OriginGroupId      *int     `json:"originGroup,omitempty"`
 	SecondaryHostnames []string `json:"secondaryHostnames,omitempty"`
+	OriginProtocol     string   `json:"originProtocol,omitempty"`
+	SslData            *int     `json:"sslData,omitempty"`
+	SslEnabled         bool     `json:"sslEnabled,omitempty"`
 	Options            *Options `json:"options,omitempty"`
 }
 
 type UpdateResourceBody struct {
 	Active             *bool    `json:"active,omitempty"`
-	OriginGroup        int      `json:"originGroup"`
+	Enabled            *bool    `json:"enabled,omitempty"`
+	OriginGroup        int      `json:"originGroup,omitempty"`
 	SecondaryHostnames []string `json:"secondaryHostnames,omitempty"`
+	OriginProtocol     string   `json:"originProtocol,omitempty"`
+	SslData            *int     `json:"sslData,omitempty"`
+	SslEnabled         *bool    `json:"sslEnabled,omitempty"`
 	Options            *Options `json:"options,omitempty"`
 }
 
