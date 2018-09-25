@@ -47,7 +47,7 @@ type Group struct {
 // Get details info for the account.
 func (s *AccountService) Details(ctx context.Context) (*Account, *http.Response, error) {
 
-	req, err := s.client.NewRequest(ctx, "GET", AccountDetailsURL, nil)
+	req, err := s.client.NewRequest(ctx, http.MethodGet, AccountDetailsURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}

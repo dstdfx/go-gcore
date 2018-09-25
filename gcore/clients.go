@@ -63,7 +63,7 @@ type ListOpts struct {
 
 // Create a new client, the client will be activated automatically.
 func (s *ClientsService) Create(ctx context.Context, body CreateClientBody) (*ClientAccount, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "POST", ResellUsersURL, body)
+	req, err := s.client.NewRequest(ctx, http.MethodPost, ResellUsersURL, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -80,7 +80,9 @@ func (s *ClientsService) Create(ctx context.Context, body CreateClientBody) (*Cl
 
 // Get data of a client by ID.
 func (s *ClientsService) Get(ctx context.Context, clientID int) (*ClientAccount, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(ResellClientURL, clientID), nil)
+	req, err := s.client.NewRequest(ctx,
+		http.MethodGet,
+		fmt.Sprintf(ResellClientURL, clientID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -102,7 +104,7 @@ func (s *ClientsService) List(ctx context.Context, opts ListOpts) ([]*ClientAcco
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest(ctx, "GET", url, nil)
+	req, err := s.client.NewRequest(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -119,7 +121,9 @@ func (s *ClientsService) List(ctx context.Context, opts ListOpts) ([]*ClientAcco
 
 // Edit data of the client.
 func (s *ClientsService) Update(ctx context.Context, clientID int, body UpdateClientBody) (*ClientAccount, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "PUT", fmt.Sprintf(ResellClientURL, clientID), body)
+	req, err := s.client.NewRequest(ctx,
+		http.MethodPut,
+		fmt.Sprintf(ResellClientURL, clientID), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -138,7 +142,9 @@ func (s *ClientsService) Update(ctx context.Context, clientID int, body UpdateCl
 // It allows to authenticate as a user (common client), common client can manage
 // his own CDN resources, origins and etc.
 func (s *ClientsService) GetCommonClient(ctx context.Context, userID int) (*CommonClient, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(ResellUserTokenURL, userID), nil)
+	req, err := s.client.NewRequest(ctx,
+		http.MethodGet,
+		fmt.Sprintf(ResellUserTokenURL, userID), nil)
 	if err != nil {
 		return nil, nil, err
 	}

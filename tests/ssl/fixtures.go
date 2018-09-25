@@ -57,8 +57,8 @@ var (
 		HasRelatedResources: true,
 		CertificateChain:    "",
 		CertIssuer:          "Let's Encrypt Authority X3",
-		ValidityNotAfter:    gcore.NewGCoreTime(time.Date(2018, 7, 12, 16, 1, 59, 0, time.UTC)),
-		ValidityNotBefore:   gcore.NewGCoreTime(time.Date(2018, 4, 13, 16, 1, 59, 0, time.UTC)),
+		ValidityNotAfter:    gcore.NewGCoreTime(time.Date(2018, time.July, 12, 16, 1, 59, 0, time.UTC)),
+		ValidityNotBefore:   gcore.NewGCoreTime(time.Date(2018, time.April, 13, 16, 1, 59, 0, time.UTC)),
 	}
 	TestGetSSLExpected = &gcore.CertSSL{
 		ID:                  1189,
@@ -69,8 +69,8 @@ var (
 		HasRelatedResources: true,
 		CertificateChain:    "",
 		CertIssuer:          "Let's Encrypt Authority X3",
-		ValidityNotAfter:    gcore.NewGCoreTime(time.Date(2018, 7, 12, 16, 1, 59, 0, time.UTC)),
-		ValidityNotBefore:   gcore.NewGCoreTime(time.Date(2018, 4, 13, 16, 1, 59, 0, time.UTC)),
+		ValidityNotAfter:    gcore.NewGCoreTime(time.Date(2018, time.July, 12, 16, 1, 59, 0, time.UTC)),
+		ValidityNotBefore:   gcore.NewGCoreTime(time.Date(2018, time.April, 13, 16, 1, 59, 0, time.UTC)),
 	}
 	TestListSSLExpected = []*gcore.CertSSL{
 		{
@@ -82,8 +82,8 @@ var (
 			HasRelatedResources: true,
 			CertificateChain:    "",
 			CertIssuer:          "Let's Encrypt Authority X3",
-			ValidityNotAfter:    gcore.NewGCoreTime(time.Date(2018, 7, 12, 16, 1, 59, 0, time.UTC)),
-			ValidityNotBefore:   gcore.NewGCoreTime(time.Date(2018, 4, 13, 16, 1, 59, 0, time.UTC)),
+			ValidityNotAfter:    gcore.NewGCoreTime(time.Date(2018, time.July, 12, 16, 1, 59, 0, time.UTC)),
+			ValidityNotBefore:   gcore.NewGCoreTime(time.Date(2018, time.April, 13, 16, 1, 59, 0, time.UTC)),
 		},
 	}
 )

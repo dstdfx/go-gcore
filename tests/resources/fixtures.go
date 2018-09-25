@@ -238,8 +238,8 @@ var (
 		Rules:      []gcore.Rule{},
 		SslEnabled: true,
 		SslData:    gcore.IntPtr(1189),
-		CreatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 31, 40, 0, time.UTC)),
-		UpdatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 32, 31, 0, time.UTC)),
+		CreatedAt:  gcore.NewGCoreTime(time.Date(2018, time.April, 9, 11, 31, 40, 0, time.UTC)),
+		UpdatedAt:  gcore.NewGCoreTime(time.Date(2018, time.April, 9, 11, 32, 31, 0, time.UTC)),
 	}
 
 	TestListResourcesExpected = []*gcore.Resource{{
@@ -291,8 +291,8 @@ var (
 		Rules:      []gcore.Rule{},
 		SslEnabled: true,
 		SslData:    gcore.IntPtr(1189),
-		CreatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 31, 40, 0, time.UTC)),
-		UpdatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 32, 31, 0, time.UTC)),
+		CreatedAt:  gcore.NewGCoreTime(time.Date(2018, time.April, 9, 11, 31, 40, 0, time.UTC)),
+		UpdatedAt:  gcore.NewGCoreTime(time.Date(2018, time.April, 9, 11, 32, 31, 0, time.UTC)),
 	}}
 
 	TestCreateResourceExpected = &gcore.Resource{
@@ -344,7 +344,7 @@ var (
 		Rules:      []gcore.Rule{},
 		SslEnabled: true,
 		SslData:    gcore.IntPtr(1189),
-		CreatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 31, 40, 0, time.UTC)),
-		UpdatedAt:  gcore.NewGCoreTime(time.Date(2018, 4, 9, 11, 32, 31, 0, time.UTC)),
+		CreatedAt:  gcore.NewGCoreTime(time.Date(2018, time.April, 9, 11, 31, 40, 0, time.UTC)),
+		UpdatedAt:  gcore.NewGCoreTime(time.Date(2018, time.April, 9, 11, 32, 31, 0, time.UTC)),
 	}
 )

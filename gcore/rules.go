@@ -231,7 +231,9 @@ type UserAgentACL struct {
 
 // Get list of the Rules for given CDN Resource
 func (s *RulesService) List(ctx context.Context, resourceID int) ([]*Rule, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(RulesURL, resourceID), nil)
+	req, err := s.client.NewRequest(ctx,
+		http.MethodGet,
+		fmt.Sprintf(RulesURL, resourceID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -248,7 +250,9 @@ func (s *RulesService) List(ctx context.Context, resourceID int) ([]*Rule, *http
 
 // Create Rule for specific CDN Resource
 func (s *RulesService) Create(ctx context.Context, resourceID int, body CreateRuleBody) (*Rule, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "POST", fmt.Sprintf(RulesURL, resourceID), body)
+	req, err := s.client.NewRequest(ctx,
+		http.MethodPost,
+		fmt.Sprintf(RulesURL, resourceID), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -265,7 +269,9 @@ func (s *RulesService) Create(ctx context.Context, resourceID int, body CreateRu
 
 // Get specific Rule for specific CDN Resource
 func (s *RulesService) Get(ctx context.Context, resourceID int, ruleID int) (*Rule, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(RuleURL, resourceID, ruleID), nil)
+	req, err := s.client.NewRequest(ctx,
+		http.MethodGet,
+		fmt.Sprintf(RuleURL, resourceID, ruleID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -282,7 +288,9 @@ func (s *RulesService) Get(ctx context.Context, resourceID int, ruleID int) (*Ru
 
 // Delete specific Rule for specific CDN Resource
 func (s *RulesService) Delete(ctx context.Context, resourceID int, ruleID int) (*http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "DELETE", fmt.Sprintf(RuleURL, resourceID, ruleID), nil)
+	req, err := s.client.NewRequest(ctx,
+		http.MethodDelete,
+		fmt.Sprintf(RuleURL, resourceID, ruleID), nil)
 	if err != nil {
 		return nil, err
 	}

@@ -89,7 +89,7 @@ type Token struct {
 // Authenticate gets API Token, if client already took a token, check if it's valid.
 // If it's not, get new one.
 func (c *Client) Authenticate(ctx context.Context, authOpts AuthOptions) error {
-	req, err := c.NewRequest(ctx, "POST", LoginURL, authOpts)
+	req, err := c.NewRequest(ctx, http.MethodPost, LoginURL, authOpts)
 	if err != nil {
 		return err
 	}
@@ -116,7 +116,12 @@ func NewCommonClient(httpClient *http.Client, logger ...GenericLogger) *CommonCl
 	}
 	baseURL, _ := url.Parse(DefaultBaseURL)
 
-	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: UserAgent, log: SelectLogger(logger...)}
+	c := &Client{
+		client:    httpClient,
+		BaseURL:   baseURL,
+		UserAgent: UserAgent,
+		log:       SelectLogger(logger...),
+	}
 	c.common.client = c
 
 	commonServices := CommonServices{}
@@ -138,7 +143,12 @@ func NewResellerClient(httpClient *http.Client, logger ...GenericLogger) *Resell
 	}
 	baseURL, _ := url.Parse(DefaultBaseURL)
 
-	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: UserAgent, log: SelectLogger(logger...)}
+	c := &Client{
+		client:    httpClient,
+		BaseURL:   baseURL,
+		UserAgent: UserAgent,
+		log:       SelectLogger(logger...),
+	}
 	c.common.client = c
 
 	resellerServices := ResellerServices{}
