@@ -5,17 +5,15 @@ import (
 	"time"
 )
 
-const (
-	DateFormat = "2006-01-02T15:04:05"
-)
+const DateFormat = "2006-01-02T15:04:05"
 
 // GCoreTime represents custom time type
 type GCoreTime struct {
 	time.Time
 }
 
-func NewGCoreTime(time time.Time) *GCoreTime {
-	return &GCoreTime{Time: time}
+func NewGCoreTime(t time.Time) *GCoreTime {
+	return &GCoreTime{Time: t}
 }
 
 func (t *GCoreTime) UnmarshalJSON(b []byte) (err error) {

@@ -59,7 +59,9 @@ type UpdateResourceBody struct {
 }
 
 func (s *ResourcesService) Update(ctx context.Context, resourceID int, body UpdateResourceBody) (*Resource, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "PUT", fmt.Sprintf(ResourceURL, resourceID), body)
+	req, err := s.client.NewRequest(ctx,
+		http.MethodPut,
+		fmt.Sprintf(ResourceURL, resourceID), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -76,7 +78,7 @@ func (s *ResourcesService) Update(ctx context.Context, resourceID int, body Upda
 
 // Get information about all CDN Resources for this account.
 func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", ResourcesURL, nil)
+	req, err := s.client.NewRequest(ctx, http.MethodGet, ResourcesURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -93,7 +95,9 @@ func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Respons
 
 // Get information about specific CDN Resource.
 func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", fmt.Sprintf(ResourceURL, resourceID), nil)
+	req, err := s.client.NewRequest(ctx,
+		http.MethodGet,
+		fmt.Sprintf(ResourceURL, resourceID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -110,7 +114,7 @@ func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, 
 
 // Create CDN Resource.
 func (s *ResourcesService) Create(ctx context.Context, body CreateResourceBody) (*Resource, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, "POST", ResourcesURL, body)
+	req, err := s.client.NewRequest(ctx, http.MethodPost, ResourcesURL, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -132,7 +136,9 @@ func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths []st
 	}
 	pathsBody.Paths = paths
 
-	req, err := s.client.NewRequest(ctx, "POST", fmt.Sprintf(ResourcePurgeURL, resourceID), pathsBody)
+	req, err := s.client.NewRequest(ctx,
+		http.MethodPost,
+		fmt.Sprintf(ResourcePurgeURL, resourceID), pathsBody)
 	if err != nil {
 		return nil, err
 	}
