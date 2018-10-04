@@ -145,7 +145,7 @@ func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths []st
 
 	resp, err := s.client.Do(req, nil)
 	if err != nil {
-		return nil, err
+		return resp, err
 	}
 
 	return resp, nil
