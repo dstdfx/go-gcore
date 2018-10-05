@@ -230,10 +230,10 @@ type UserAgentACL struct {
 }
 
 // Get list of the Rules for given CDN Resource
-func (s *RulesService) List(ctx context.Context, resourceID int) ([]*Rule, *http.Response, error) {
+func (s *RulesService) List(ctx context.Context, resourceId int) ([]*Rule, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(RulesURL, resourceID), nil)
+		fmt.Sprintf(RulesURL, resourceId), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -249,10 +249,10 @@ func (s *RulesService) List(ctx context.Context, resourceID int) ([]*Rule, *http
 }
 
 // Create Rule for specific CDN Resource
-func (s *RulesService) Create(ctx context.Context, resourceID int, body CreateRuleBody) (*Rule, *http.Response, error) {
+func (s *RulesService) Create(ctx context.Context, resourceId int, body *CreateRuleBody) (*Rule, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPost,
-		fmt.Sprintf(RulesURL, resourceID), body)
+		fmt.Sprintf(RulesURL, resourceId), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -268,10 +268,10 @@ func (s *RulesService) Create(ctx context.Context, resourceID int, body CreateRu
 }
 
 // Get specific Rule for specific CDN Resource
-func (s *RulesService) Get(ctx context.Context, resourceID int, ruleID int) (*Rule, *http.Response, error) {
+func (s *RulesService) Get(ctx context.Context, resourceId, ruleId int) (*Rule, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(RuleURL, resourceID, ruleID), nil)
+		fmt.Sprintf(RuleURL, resourceId, ruleId), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -287,10 +287,10 @@ func (s *RulesService) Get(ctx context.Context, resourceID int, ruleID int) (*Ru
 }
 
 // Delete specific Rule for specific CDN Resource
-func (s *RulesService) Delete(ctx context.Context, resourceID int, ruleID int) (*http.Response, error) {
+func (s *RulesService) Delete(ctx context.Context, resourceId, ruleId int) (*http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodDelete,
-		fmt.Sprintf(RuleURL, resourceID, ruleID), nil)
+		fmt.Sprintf(RuleURL, resourceId, ruleId), nil)
 	if err != nil {
 		return nil, err
 	}

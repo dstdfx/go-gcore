@@ -52,10 +52,10 @@ func (s *CertService) List(ctx context.Context) ([]*CertSSL, *http.Response, err
 }
 
 // Get specific CertSSL certificate.
-func (s *CertService) Get(ctx context.Context, certID int) (*CertSSL, *http.Response, error) {
+func (s *CertService) Get(ctx context.Context, certId int) (*CertSSL, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(CertificateURL, certID), nil)
+		fmt.Sprintf(CertificateURL, certId), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -71,8 +71,8 @@ func (s *CertService) Get(ctx context.Context, certID int) (*CertSSL, *http.Resp
 }
 
 // Delete specific CertSSL certificate.
-func (s *CertService) Delete(ctx context.Context, certID int) (*http.Response, error) {
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, fmt.Sprintf(CertificateURL, certID), nil)
+func (s *CertService) Delete(ctx context.Context, certId int) (*http.Response, error) {
+	req, err := s.client.NewRequest(ctx, http.MethodDelete, fmt.Sprintf(CertificateURL, certId), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (s *CertService) Delete(ctx context.Context, certID int) (*http.Response, e
 // Add an CertSSL certificate to deliver content via HTTPS protocol.
 // Paste all strings of the certificate(s) and the private key in one string parameter.
 // Each certificate in chain and the private key should be divided with the "\n" symbol.
-func (s *CertService) Add(ctx context.Context, body AddCertBody) (*CertSSL, *http.Response, error) {
+func (s *CertService) Add(ctx context.Context, body *AddCertBody) (*CertSSL, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, http.MethodPost, CertificatesURL, body)
 	if err != nil {
 		return nil, nil, err

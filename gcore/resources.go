@@ -58,10 +58,10 @@ type UpdateResourceBody struct {
 	Options            *Options `json:"options,omitempty"`
 }
 
-func (s *ResourcesService) Update(ctx context.Context, resourceID int, body UpdateResourceBody) (*Resource, *http.Response, error) {
+func (s *ResourcesService) Update(ctx context.Context, resourceId int, body *UpdateResourceBody) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPut,
-		fmt.Sprintf(ResourceURL, resourceID), body)
+		fmt.Sprintf(ResourceURL, resourceId), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -94,10 +94,10 @@ func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Respons
 }
 
 // Get information about specific CDN Resource.
-func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, *http.Response, error) {
+func (s *ResourcesService) Get(ctx context.Context, resourceId int) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(ResourceURL, resourceID), nil)
+		fmt.Sprintf(ResourceURL, resourceId), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -113,7 +113,7 @@ func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, 
 }
 
 // Create CDN Resource.
-func (s *ResourcesService) Create(ctx context.Context, body CreateResourceBody) (*Resource, *http.Response, error) {
+func (s *ResourcesService) Create(ctx context.Context, body *CreateResourceBody) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, http.MethodPost, ResourcesURL, body)
 	if err != nil {
 		return nil, nil, err
@@ -130,7 +130,7 @@ func (s *ResourcesService) Create(ctx context.Context, body CreateResourceBody) 
 }
 
 // Purge deletes cache from CDN servers. It is necessary for updating CDN content.
-func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths []string) (*http.Response, error) {
+func (s *ResourcesService) Purge(ctx context.Context, resourceId int, paths []string) (*http.Response, error) {
 	var pathsBody struct {
 		Paths []string `json:"paths"`
 	}
@@ -138,7 +138,7 @@ func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths []st
 
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPost,
-		fmt.Sprintf(ResourcePurgeURL, resourceID), pathsBody)
+		fmt.Sprintf(ResourcePurgeURL, resourceId), pathsBody)
 	if err != nil {
 		return nil, err
 	}

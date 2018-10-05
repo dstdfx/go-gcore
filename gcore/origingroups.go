@@ -60,10 +60,10 @@ func (s *OriginGroupsService) List(ctx context.Context) ([]*OriginGroup, *http.R
 }
 
 // Get origins group info.
-func (s *OriginGroupsService) Get(ctx context.Context, originGroupID int) (*OriginGroup, *http.Response, error) {
+func (s *OriginGroupsService) Get(ctx context.Context, originGroupId int) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(OriginGroupURL, originGroupID), nil)
+		fmt.Sprintf(OriginGroupURL, originGroupId), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -79,7 +79,7 @@ func (s *OriginGroupsService) Get(ctx context.Context, originGroupID int) (*Orig
 }
 
 // Create origin group.
-func (s *OriginGroupsService) Create(ctx context.Context, body CreateOriginGroupBody) (*OriginGroup, *http.Response, error) {
+func (s *OriginGroupsService) Create(ctx context.Context, body *CreateOriginGroupBody) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, http.MethodPost, OriginGroupsURL, body)
 	if err != nil {
 		return nil, nil, err
@@ -96,10 +96,10 @@ func (s *OriginGroupsService) Create(ctx context.Context, body CreateOriginGroup
 }
 
 // Update origin group info.
-func (s *OriginGroupsService) Update(ctx context.Context, originGroupID int, body UpdateOriginGroupBody) (*OriginGroup, *http.Response, error) {
+func (s *OriginGroupsService) Update(ctx context.Context, originGroupId int, body *UpdateOriginGroupBody) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPut,
-		fmt.Sprintf(OriginGroupURL, originGroupID), body)
+		fmt.Sprintf(OriginGroupURL, originGroupId), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -115,10 +115,10 @@ func (s *OriginGroupsService) Update(ctx context.Context, originGroupID int, bod
 }
 
 // Delete origin group.
-func (s *OriginGroupsService) Delete(ctx context.Context, originGroupID int) (*http.Response, error) {
+func (s *OriginGroupsService) Delete(ctx context.Context, originGroupId int) (*http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodDelete,
-		fmt.Sprintf(OriginGroupURL, originGroupID), nil)
+		fmt.Sprintf(OriginGroupURL, originGroupId), nil)
 	if err != nil {
 		return nil, err
 	}

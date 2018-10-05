@@ -33,7 +33,7 @@ func TestClientsService_Create(t *testing.T) {
 		Password: "123123123qwe",
 	}
 
-	got, _, err := resell.Clients.Create(context.Background(), body)
+	got, _, err := resell.Clients.Create(context.Background(), &body)
 	expected := TestCreateClientExpected
 	if err != nil {
 		t.Fatal(err)
@@ -80,7 +80,7 @@ func TestClientsService_List(t *testing.T) {
 
 	resell := th.GetAuthenticatedResellerClient()
 
-	got, _, err := resell.Clients.List(context.Background(), gcore.ListOpts{})
+	got, _, err := resell.Clients.List(context.Background(), &gcore.ListOpts{})
 	expected := TestListClientsExpected
 	if err != nil {
 		t.Fatal(err)
@@ -108,7 +108,7 @@ func TestClientsService_Update(t *testing.T) {
 	TestUpdateClientExpected.Name = "Another Name"
 
 	expected := TestUpdateClientExpected
-	got, _, err := resell.Clients.Update(context.Background(), expected.ID, body)
+	got, _, err := resell.Clients.Update(context.Background(), expected.ID, &body)
 	if err != nil {
 		t.Fatal(err)
 	}

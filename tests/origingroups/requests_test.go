@@ -73,7 +73,7 @@ func TestOriginGroupsService_Create(t *testing.T) {
 		Origins: expected.Origins}
 
 	client := th.GetAuthenticatedCommonClient()
-	got, _, err := client.OriginGroups.Create(context.Background(), body)
+	got, _, err := client.OriginGroups.Create(context.Background(), &body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -103,7 +103,7 @@ func TestOriginGroupsService_Update(t *testing.T) {
 	}
 
 	client := th.GetAuthenticatedCommonClient()
-	got, _, err := client.OriginGroups.Update(context.Background(), expected.ID, body)
+	got, _, err := client.OriginGroups.Update(context.Background(), expected.ID, &body)
 	if err != nil {
 		t.Fatal(err)
 	}

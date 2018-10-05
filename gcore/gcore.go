@@ -204,7 +204,8 @@ func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
 
 	c.log.Debugf("RESP   %v %v %v", req.Method, req.URL, resp.StatusCode)
 
-	if resp.StatusCode >= http.StatusBadRequest && resp.StatusCode <= http.StatusNetworkAuthenticationRequired {
+	if resp.StatusCode >= http.StatusBadRequest &&
+		resp.StatusCode <= http.StatusNetworkAuthenticationRequired {
 
 		var respErr error
 

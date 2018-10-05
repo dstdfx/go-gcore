@@ -30,7 +30,7 @@ func TestSSLService_Add(t *testing.T) {
 	}
 
 	client := th.GetAuthenticatedCommonClient()
-	got, _, err := client.Certificates.Add(context.Background(), body)
+	got, _, err := client.Certificates.Add(context.Background(), &body)
 	if err != nil {
 		t.Fatal(err)
 	}

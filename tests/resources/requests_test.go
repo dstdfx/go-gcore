@@ -78,7 +78,7 @@ func TestResourcesService_Create(t *testing.T) {
 
 	client := th.GetAuthenticatedCommonClient()
 	expected := TestCreateResourceExpected
-	got, _, err := client.Resources.Create(context.Background(), resourceBody)
+	got, _, err := client.Resources.Create(context.Background(), &resourceBody)
 	if err != nil {
 		t.Fatal(err)
 	}

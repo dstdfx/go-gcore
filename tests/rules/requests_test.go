@@ -35,7 +35,7 @@ func TestRulesService_Create(t *testing.T) {
 	}
 
 	client := th.GetAuthenticatedCommonClient()
-	got, _, err := client.Rules.Create(context.Background(), FakeResourceID, body)
+	got, _, err := client.Rules.Create(context.Background(), FakeResourceID, &body)
 	if err != nil {
 		t.Fatal(err)
 	}
