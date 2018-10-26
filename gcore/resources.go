@@ -51,7 +51,7 @@ type UpdateResourceBody struct {
 	Active             *bool    `json:"active,omitempty"`
 	Enabled            *bool    `json:"enabled,omitempty"`
 	OriginGroup        int      `json:"originGroup,omitempty"`
-	SecondaryHostnames []string `json:"secondaryHostnames,omitempty"`
+	SecondaryHostnames []string `json:"secondaryHostnames"`
 	OriginProtocol     string   `json:"originProtocol,omitempty"`
 	SslData            *int     `json:"sslData,omitempty"`
 	SslEnabled         *bool    `json:"sslEnabled,omitempty"`
