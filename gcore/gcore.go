@@ -210,8 +210,13 @@ func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
 		var respErr error
 
 		if resp.Body != nil {
+
 			body, _ := ioutil.ReadAll(resp.Body)
 			defer resp.Body.Close()
+
+			// To able to read response twice
+			rdr2 := ioutil.NopCloser(bytes.NewBuffer(body))
+			resp.Body = rdr2
 
 			c.log.Debugf("RESP BODY  %s", string(body))
 			respErr = fmt.Errorf("gcore: got the %d error status code from the server with body: %s",
