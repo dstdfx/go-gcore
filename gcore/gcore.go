@@ -82,8 +82,8 @@ type AuthOptions struct {
 
 // Token to access G-Core API.
 type Token struct {
-	Value  string     `json:"token"`
-	Expire *GCoreTime `json:"expire"`
+	Value  string `json:"token"`
+	Expire *Time  `json:"expire"`
 }
 
 // Authenticate gets API Token, if client already took a token, check if it's valid.
@@ -97,6 +97,7 @@ func (c *Client) Authenticate(ctx context.Context, authOpts AuthOptions) error {
 	c.Lock()
 	defer c.Unlock()
 	if c.Token == nil || c.Token.Expire.Before(time.Now().UTC()) {
+		// Renew token if expired
 		token := &Token{}
 		_, err = c.Do(req, token)
 		if err != nil {
@@ -158,6 +159,7 @@ func NewResellerClient(httpClient *http.Client, logger ...GenericLogger) *Resell
 	return resellClient
 }
 
+// NewRequest method returns new request by given options.
 func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body interface{}) (*http.Request, error) {
 
 	rel, err := url.Parse(urlStr)
@@ -193,6 +195,7 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 	return req, nil
 }
 
+// Do method executes request and checks response body.
 func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
 	c.log.Debugf("REQ  %v %v", req.Method, req.URL)
 

@@ -7,16 +7,18 @@ import (
 
 const DateFormat = "2006-01-02T15:04:05"
 
-// GCoreTime represents custom time type
-type GCoreTime struct {
+// Time represents custom time type
+type Time struct {
 	time.Time
 }
 
-func NewGCoreTime(t time.Time) *GCoreTime {
-	return &GCoreTime{Time: t}
+// NewTime returns new instance of Time.
+func NewTime(t time.Time) *Time {
+	return &Time{Time: t}
 }
 
-func (t *GCoreTime) UnmarshalJSON(b []byte) (err error) {
+// UnmarshalJSON represents custom implementation of Unmarshaler interface.
+func (t *Time) UnmarshalJSON(b []byte) (err error) {
 	s := strings.Trim(string(b), "\"")
 	if s == "null" {
 		t.Time = time.Time{}

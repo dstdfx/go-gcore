@@ -15,26 +15,27 @@ type CertService service
 
 // CertSSL represents G-Core's CertSSL certificate
 type CertSSL struct {
-	ID                  int        `json:"id"`
-	Name                string     `json:"name"`
-	CName               string     `json:"cname"`
-	Deleted             bool       `json:"deleted"`
-	CertSubjectAlt      *string    `json:"cert_subject_alt"`
-	HasRelatedResources bool       `json:"hasRelatedResources"`
-	ValidityNotAfter    *GCoreTime `json:"validity_not_after"`
-	ValidityNotBefore   *GCoreTime `json:"validity_not_before"`
-	CertificateChain    string     `json:"sslCertificateChain"`
-	CertIssuer          string     `json:"cert_issuer"`
-	CertSubjectCn       string     `json:"cert_subject_cn"`
+	ID                  int     `json:"id"`
+	Name                string  `json:"name"`
+	CName               string  `json:"cname"`
+	Deleted             bool    `json:"deleted"`
+	CertSubjectAlt      *string `json:"cert_subject_alt"`
+	HasRelatedResources bool    `json:"hasRelatedResources"`
+	ValidityNotAfter    *Time   `json:"validity_not_after"`
+	ValidityNotBefore   *Time   `json:"validity_not_before"`
+	CertificateChain    string  `json:"sslCertificateChain"`
+	CertIssuer          string  `json:"cert_issuer"`
+	CertSubjectCn       string  `json:"cert_subject_cn"`
 }
 
+// AddCertBody represents SSL certificate body for add certificate.
 type AddCertBody struct {
 	Name        string `json:"name"`
 	Certificate string `json:"sslCertificate"`
 	PrivateKey  string `json:"sslPrivateKey"`
 }
 
-// Get all CertSSL certificates.
+// List returns list of all SSL certificates.
 func (s *CertService) List(ctx context.Context) ([]*CertSSL, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, http.MethodGet, CertificatesURL, nil)
 	if err != nil {
@@ -51,11 +52,11 @@ func (s *CertService) List(ctx context.Context) ([]*CertSSL, *http.Response, err
 	return certs, resp, nil
 }
 
-// Get specific CertSSL certificate.
-func (s *CertService) Get(ctx context.Context, certId int) (*CertSSL, *http.Response, error) {
+// Get method returns specific SSL certificate.
+func (s *CertService) Get(ctx context.Context, certID int) (*CertSSL, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(CertificateURL, certId), nil)
+		fmt.Sprintf(CertificateURL, certID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -70,9 +71,9 @@ func (s *CertService) Get(ctx context.Context, certId int) (*CertSSL, *http.Resp
 	return cert, resp, nil
 }
 
-// Delete specific CertSSL certificate.
-func (s *CertService) Delete(ctx context.Context, certId int) (*http.Response, error) {
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, fmt.Sprintf(CertificateURL, certId), nil)
+// Delete method deletes specific SSL certificate.
+func (s *CertService) Delete(ctx context.Context, certID int) (*http.Response, error) {
+	req, err := s.client.NewRequest(ctx, http.MethodDelete, fmt.Sprintf(CertificateURL, certID), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (s *CertService) Delete(ctx context.Context, certId int) (*http.Response, e
 	return resp, nil
 }
 
-// Add an CertSSL certificate to deliver content via HTTPS protocol.
+// Add method adds SSL certificate to deliver content via HTTPS protocol.
 // Paste all strings of the certificate(s) and the private key in one string parameter.
 // Each certificate in chain and the private key should be divided with the "\n" symbol.
 func (s *CertService) Add(ctx context.Context, body *AddCertBody) (*CertSSL, *http.Response, error) {

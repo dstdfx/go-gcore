@@ -16,30 +16,31 @@ type ResourcesService service
 
 // Resource represents G-Core's CDN Resource.
 type Resource struct {
-	ID                 int        `json:"id"`
-	Name               *string    `json:"name"`
-	Deleted            bool       `json:"deleted"`
-	Active             bool       `json:"active"`
-	Enabled            bool       `json:"enabled"`
-	CompanyName        string     `json:"companyName"`
-	Status             string     `json:"status"`
-	Client             int        `json:"client"`
-	OriginGroup        int        `json:"originGroup"`
-	Cname              string     `json:"cname"`
-	SecondaryHostnames []string   `json:"secondaryHostnames"`
-	Options            *Options   `json:"options"`
-	OriginProtocol     string     `json:"originProtocol"`
-	Rules              []Rule     `json:"rules"`
-	CreatedAt          *GCoreTime `json:"created"`
-	UpdatedAt          *GCoreTime `json:"updated"`
-	SslData            *int       `json:"sslData"`
-	SslEnabled         bool       `json:"sslEnabled"`
+	ID                 int      `json:"id"`
+	Name               *string  `json:"name"`
+	Deleted            bool     `json:"deleted"`
+	Active             bool     `json:"active"`
+	Enabled            bool     `json:"enabled"`
+	CompanyName        string   `json:"companyName"`
+	Status             string   `json:"status"`
+	Client             int      `json:"client"`
+	OriginGroup        int      `json:"originGroup"`
+	Cname              string   `json:"cname"`
+	SecondaryHostnames []string `json:"secondaryHostnames"`
+	Options            *Options `json:"options"`
+	OriginProtocol     string   `json:"originProtocol"`
+	Rules              []Rule   `json:"rules"`
+	CreatedAt          *Time    `json:"created"`
+	UpdatedAt          *Time    `json:"updated"`
+	SslData            *int     `json:"sslData"`
+	SslEnabled         bool     `json:"sslEnabled"`
 }
 
+// CreateResourceBody represents request body for resource create.
 type CreateResourceBody struct {
 	Cname              string   `json:"cname"`
 	Origin             string   `json:"origin,omitempty"`
-	OriginGroupId      *int     `json:"originGroup,omitempty"`
+	OriginGroupID      *int     `json:"originGroup,omitempty"`
 	SecondaryHostnames []string `json:"secondaryHostnames,omitempty"`
 	OriginProtocol     string   `json:"originProtocol,omitempty"`
 	SslData            *int     `json:"sslData,omitempty"`
@@ -47,6 +48,7 @@ type CreateResourceBody struct {
 	Options            *Options `json:"options,omitempty"`
 }
 
+// UpdateResourceBody represents request body for resource update.
 type UpdateResourceBody struct {
 	Active             *bool    `json:"active,omitempty"`
 	Enabled            *bool    `json:"enabled,omitempty"`
@@ -58,10 +60,11 @@ type UpdateResourceBody struct {
 	Options            *Options `json:"options,omitempty"`
 }
 
-func (s *ResourcesService) Update(ctx context.Context, resourceId int, body *UpdateResourceBody) (*Resource, *http.Response, error) {
+// Update method updates resource by given body.
+func (s *ResourcesService) Update(ctx context.Context, resourceID int, body *UpdateResourceBody) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPut,
-		fmt.Sprintf(ResourceURL, resourceId), body)
+		fmt.Sprintf(ResourceURL, resourceID), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -76,7 +79,7 @@ func (s *ResourcesService) Update(ctx context.Context, resourceId int, body *Upd
 	return resource, resp, nil
 }
 
-// Get information about all CDN Resources for this account.
+// List method returns all resources for this account.
 func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, http.MethodGet, ResourcesURL, nil)
 	if err != nil {
@@ -93,11 +96,11 @@ func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Respons
 	return resources, resp, nil
 }
 
-// Get information about specific CDN Resource.
-func (s *ResourcesService) Get(ctx context.Context, resourceId int) (*Resource, *http.Response, error) {
+// Get method returns resource by given resourceID.
+func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(ResourceURL, resourceId), nil)
+		fmt.Sprintf(ResourceURL, resourceID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -112,7 +115,7 @@ func (s *ResourcesService) Get(ctx context.Context, resourceId int) (*Resource, 
 	return resource, resp, nil
 }
 
-// Create CDN Resource.
+// Create method creates resource.
 func (s *ResourcesService) Create(ctx context.Context, body *CreateResourceBody) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, http.MethodPost, ResourcesURL, body)
 	if err != nil {
@@ -129,8 +132,9 @@ func (s *ResourcesService) Create(ctx context.Context, body *CreateResourceBody)
 	return resource, resp, nil
 }
 
-// Purge deletes cache from CDN servers. It is necessary for updating CDN content.
-func (s *ResourcesService) Purge(ctx context.Context, resourceId int, paths []string) (*http.Response, error) {
+// Purge method deletes cache from CDN servers for given paths.
+// If `paths` is empty - purges all cache.
+func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths []string) (*http.Response, error) {
 	var pathsBody struct {
 		Paths []string `json:"paths"`
 	}
@@ -138,7 +142,7 @@ func (s *ResourcesService) Purge(ctx context.Context, resourceId int, paths []st
 
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPost,
-		fmt.Sprintf(ResourcePurgeURL, resourceId), pathsBody)
+		fmt.Sprintf(ResourcePurgeURL, resourceID), pathsBody)
 	if err != nil {
 		return nil, err
 	}

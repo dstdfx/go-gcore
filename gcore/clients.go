@@ -19,22 +19,23 @@ type ClientsService service
 
 // ClientAccount represents G-Core's client account.
 type ClientAccount struct {
-	ID               int        `json:"id"`
-	Client           int        `json:"client"`
-	Users            []*User    `json:"users"`
-	CurrentUser      int        `json:"currentUser"`
-	Email            string     `json:"email"`
-	Phone            string     `json:"phone"`
-	Name             string     `json:"name"`
-	Status           string     `json:"status"`
-	Created          *GCoreTime `json:"created"`
-	Updated          *GCoreTime `json:"updated"`
-	CompanyName      string     `json:"companyName"`
-	UtilizationLevel int        `json:"utilization_level"`
-	Reseller         int        `json:"reseller"`
-	Cname            string     `json:"cname,omitempty"`
+	ID               int     `json:"id"`
+	Client           int     `json:"client"`
+	Users            []*User `json:"users"`
+	CurrentUser      int     `json:"currentUser"`
+	Email            string  `json:"email"`
+	Phone            string  `json:"phone"`
+	Name             string  `json:"name"`
+	Status           string  `json:"status"`
+	Created          *Time   `json:"created"`
+	Updated          *Time   `json:"updated"`
+	CompanyName      string  `json:"companyName"`
+	UtilizationLevel int     `json:"utilization_level"`
+	Reseller         int     `json:"reseller"`
+	Cname            string  `json:"cname,omitempty"`
 }
 
+// CreateClientBody represents request body for create client.
 type CreateClientBody struct {
 	UserType string `json:"user_type"`
 	Name     string `json:"name"`
@@ -44,6 +45,7 @@ type CreateClientBody struct {
 	Password string `json:"password"`
 }
 
+// UpdateClientBody represents request body for update client.
 type UpdateClientBody struct {
 	Name        string `json:"name"`
 	CompanyName string `json:"companyName"`
@@ -52,6 +54,7 @@ type UpdateClientBody struct {
 	Seller      int    `json:"seller,omitempty"`
 }
 
+// ListOpts represents list of additional options to filter client's list by.
 type ListOpts struct {
 	Email       string `url:"email,omitempty"`
 	Name        string `url:"name,omitempty"`
@@ -61,7 +64,7 @@ type ListOpts struct {
 	Activated   bool   `url:"activated,omitempty"`
 }
 
-// Create a new client, the client will be activated automatically.
+// Create method creates a new client, the client will be activated automatically.
 func (s *ClientsService) Create(ctx context.Context, body *CreateClientBody) (*ClientAccount, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, http.MethodPost, ResellUsersURL, body)
 	if err != nil {
@@ -78,11 +81,11 @@ func (s *ClientsService) Create(ctx context.Context, body *CreateClientBody) (*C
 	return clientAccount, resp, nil
 }
 
-// Get data of a client by ID.
-func (s *ClientsService) Get(ctx context.Context, clientId int) (*ClientAccount, *http.Response, error) {
+// Get method returns data of a client by ID.
+func (s *ClientsService) Get(ctx context.Context, clientID int) (*ClientAccount, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(ResellClientURL, clientId), nil)
+		fmt.Sprintf(ResellClientURL, clientID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -97,7 +100,7 @@ func (s *ClientsService) Get(ctx context.Context, clientId int) (*ClientAccount,
 	return clientAccount, resp, nil
 }
 
-// Get a list of all Clients assigned to a Reseller.
+// List method gets a list of all Clients assigned to a Reseller.
 func (s *ClientsService) List(ctx context.Context, opts *ListOpts) ([]*ClientAccount, *http.Response, error) {
 	url, err := addOptions(ResellClientsURL, opts)
 	if err != nil {
@@ -119,7 +122,7 @@ func (s *ClientsService) List(ctx context.Context, opts *ListOpts) ([]*ClientAcc
 	return clients, resp, nil
 }
 
-// Edit data of the client.
+// Update method edits data of the client.
 func (s *ClientsService) Update(ctx context.Context, clientID int, body *UpdateClientBody) (*ClientAccount, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPut,
@@ -138,13 +141,14 @@ func (s *ClientsService) Update(ctx context.Context, clientID int, body *UpdateC
 	return client, resp, nil
 }
 
+// GetCommonClient method returns CommonClient for the given userID.
 // This feature has been taken from the admin web-panel, is not documented at all
 // It allows to authenticate as a user (common client), common client can manage
 // his own CDN resources, origins and etc.
-func (s *ClientsService) GetCommonClient(ctx context.Context, userId int) (*CommonClient, *http.Response, error) {
+func (s *ClientsService) GetCommonClient(ctx context.Context, userID int) (*CommonClient, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(ResellUserTokenURL, userId), nil)
+		fmt.Sprintf(ResellUserTokenURL, userID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -162,15 +166,17 @@ func (s *ClientsService) GetCommonClient(ctx context.Context, userId int) (*Comm
 	return commonClient, resp, nil
 }
 
+// PaidService represents G-Core paid service.
 type PaidService struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
+// SuspendCDN method suspends CDN-service for given clientID.
 // This feature has been taken from the admin web-panel, is not documented at all.
 // It allows to pause CDN service for specific client.
-func (s *ClientsService) SuspendCDN(ctx context.Context, clientId int) (*http.Response, error) {
-	url, _ := addOptions(fmt.Sprintf(ResellClientServicesURL, clientId), struct {
+func (s *ClientsService) SuspendCDN(ctx context.Context, clientID int) (*http.Response, error) {
+	url, _ := addOptions(fmt.Sprintf(ResellClientServicesURL, clientID), struct {
 		Name string `url:"name"`
 	}{"CDN"})
 
@@ -186,10 +192,11 @@ func (s *ClientsService) SuspendCDN(ctx context.Context, clientId int) (*http.Re
 		return resp, err
 	}
 
+	// TODO: fixme
 	// The only one CDN service is supposed to be
 	req, err = s.client.NewRequest(ctx,
 		http.MethodPut,
-		fmt.Sprintf(ResellClientServiceURL, clientId, paidServices[0].ID),
+		fmt.Sprintf(ResellClientServiceURL, clientID, paidServices[0].ID),
 		struct {
 			Enabled bool   `json:"enabled"`
 			Status  string `json:"status"`
@@ -206,10 +213,11 @@ func (s *ClientsService) SuspendCDN(ctx context.Context, clientId int) (*http.Re
 	return resp, nil
 }
 
+// ResumeCDN method resumes CDN-service for given clientID.
 // This feature has been taken from the admin web-panel, is not documented at all.
 // It allows to resume CDN service for specific client.
-func (s *ClientsService) ResumeCDN(ctx context.Context, clientId int) (*http.Response, error) {
-	url, _ := addOptions(fmt.Sprintf(ResellClientServicesURL, clientId), struct {
+func (s *ClientsService) ResumeCDN(ctx context.Context, clientID int) (*http.Response, error) {
+	url, _ := addOptions(fmt.Sprintf(ResellClientServicesURL, clientID), struct {
 		Name string `url:"name"`
 	}{"CDN"})
 
@@ -225,10 +233,11 @@ func (s *ClientsService) ResumeCDN(ctx context.Context, clientId int) (*http.Res
 		return resp, err
 	}
 
+	// TODO: fixme
 	// The only one CDN service is supposed to be
 	req, err = s.client.NewRequest(ctx,
 		http.MethodPut,
-		fmt.Sprintf(ResellClientServiceURL, clientId, paidServices[0].ID),
+		fmt.Sprintf(ResellClientServiceURL, clientID, paidServices[0].ID),
 		struct {
 			Enabled bool   `json:"enabled"`
 			Status  string `json:"status"`
