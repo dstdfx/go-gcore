@@ -2,14 +2,10 @@ sudo: false
 language: go
 install:
   - go get golang.org/x/tools/cmd/goimports
-  - go get github.com/golang/lint/golint
   - go get github.com/go-critic/go-critic/...
 go:
   - "1.11"
 before_script:
-  - go vet ./...
-  - ./scripts/imports
-  - ./scripts/format
-  - gocritic check-project --enable=all -withExperimental ./gcore
+  - make fulllint
 script:
-  - ./scripts/test
+  - make test

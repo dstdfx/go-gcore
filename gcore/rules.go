@@ -52,6 +52,7 @@ type Options struct {
 	UserAgentACL         *UserAgentACL         `json:"user_agent_acl"`
 }
 
+// CreateRuleBody represents request body for rule create.
 type CreateRuleBody struct {
 	Rule     string  `json:"rule"`
 	Name     string  `json:"name"`
@@ -229,11 +230,11 @@ type UserAgentACL struct {
 	PolicyType     string   `json:"policy_type"`
 }
 
-// Get list of the Rules for given CDN Resource
-func (s *RulesService) List(ctx context.Context, resourceId int) ([]*Rule, *http.Response, error) {
+// List method returns list of the rules for given resourceID.
+func (s *RulesService) List(ctx context.Context, resourceID int) ([]*Rule, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(RulesURL, resourceId), nil)
+		fmt.Sprintf(RulesURL, resourceID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -248,11 +249,11 @@ func (s *RulesService) List(ctx context.Context, resourceId int) ([]*Rule, *http
 	return rules, resp, nil
 }
 
-// Create Rule for specific CDN Resource
-func (s *RulesService) Create(ctx context.Context, resourceId int, body *CreateRuleBody) (*Rule, *http.Response, error) {
+// Create method creates rule for given resourceID.
+func (s *RulesService) Create(ctx context.Context, resourceID int, body *CreateRuleBody) (*Rule, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPost,
-		fmt.Sprintf(RulesURL, resourceId), body)
+		fmt.Sprintf(RulesURL, resourceID), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -267,11 +268,11 @@ func (s *RulesService) Create(ctx context.Context, resourceId int, body *CreateR
 	return rule, resp, nil
 }
 
-// Get specific Rule for specific CDN Resource
-func (s *RulesService) Get(ctx context.Context, resourceId, ruleId int) (*Rule, *http.Response, error) {
+// Get method returns rule for given ruleID.
+func (s *RulesService) Get(ctx context.Context, resourceID, ruleID int) (*Rule, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(RuleURL, resourceId, ruleId), nil)
+		fmt.Sprintf(RuleURL, resourceID, ruleID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -286,11 +287,11 @@ func (s *RulesService) Get(ctx context.Context, resourceId, ruleId int) (*Rule, 
 	return rule, resp, nil
 }
 
-// Delete specific Rule for specific CDN Resource
-func (s *RulesService) Delete(ctx context.Context, resourceId, ruleId int) (*http.Response, error) {
+// Delete method deletes rule by given ruleID.
+func (s *RulesService) Delete(ctx context.Context, resourceID, ruleID int) (*http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodDelete,
-		fmt.Sprintf(RuleURL, resourceId, ruleId), nil)
+		fmt.Sprintf(RuleURL, resourceID, ruleID), nil)
 	if err != nil {
 		return nil, err
 	}

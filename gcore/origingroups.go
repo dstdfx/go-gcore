@@ -30,19 +30,21 @@ type OriginGroup struct {
 	Origins   []Origin `json:"origins"`
 }
 
+// UpdateOriginGroupBody represents request body for origin group update.
 type UpdateOriginGroupBody struct {
 	Name    string   `json:"name"`
 	UseNext bool     `json:"useNext"`
 	Origins []Origin `json:"origins"`
 }
 
+// CreateOriginGroupBody represents request body for origin group create.
 type CreateOriginGroupBody struct {
 	Name    string   `json:"name"`
 	UseNext bool     `json:"useNext"`
 	Origins []Origin `json:"origins"`
 }
 
-// Get information about Origins Groups and Origin Sources.
+// List method returns list information about Origins Groups and Origin Sources.
 func (s *OriginGroupsService) List(ctx context.Context) ([]*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, http.MethodGet, OriginGroupsURL, nil)
 	if err != nil {
@@ -59,11 +61,11 @@ func (s *OriginGroupsService) List(ctx context.Context) ([]*OriginGroup, *http.R
 	return originGroups, resp, nil
 }
 
-// Get origins group info.
-func (s *OriginGroupsService) Get(ctx context.Context, originGroupId int) (*OriginGroup, *http.Response, error) {
+// Get method returns origin group info for given ID.
+func (s *OriginGroupsService) Get(ctx context.Context, originGroupID int) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(OriginGroupURL, originGroupId), nil)
+		fmt.Sprintf(OriginGroupURL, originGroupID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -78,7 +80,7 @@ func (s *OriginGroupsService) Get(ctx context.Context, originGroupId int) (*Orig
 	return originGroup, resp, nil
 }
 
-// Create origin group.
+// Create method creates origin group.
 func (s *OriginGroupsService) Create(ctx context.Context, body *CreateOriginGroupBody) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx, http.MethodPost, OriginGroupsURL, body)
 	if err != nil {
@@ -95,11 +97,11 @@ func (s *OriginGroupsService) Create(ctx context.Context, body *CreateOriginGrou
 	return originGroup, resp, nil
 }
 
-// Update origin group info.
-func (s *OriginGroupsService) Update(ctx context.Context, originGroupId int, body *UpdateOriginGroupBody) (*OriginGroup, *http.Response, error) {
+// Update method updates origin group info.
+func (s *OriginGroupsService) Update(ctx context.Context, originGroupID int, body *UpdateOriginGroupBody) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPut,
-		fmt.Sprintf(OriginGroupURL, originGroupId), body)
+		fmt.Sprintf(OriginGroupURL, originGroupID), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -114,11 +116,11 @@ func (s *OriginGroupsService) Update(ctx context.Context, originGroupId int, bod
 	return originGroup, resp, nil
 }
 
-// Delete origin group.
-func (s *OriginGroupsService) Delete(ctx context.Context, originGroupId int) (*http.Response, error) {
+// Delete method deletes origin group.
+func (s *OriginGroupsService) Delete(ctx context.Context, originGroupID int) (*http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodDelete,
-		fmt.Sprintf(OriginGroupURL, originGroupId), nil)
+		fmt.Sprintf(OriginGroupURL, originGroupID), nil)
 	if err != nil {
 		return nil, err
 	}
