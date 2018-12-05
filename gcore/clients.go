@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -56,12 +57,12 @@ type UpdateClientBody struct {
 
 // ListOpts represents list of additional options to filter client's list by.
 type ListOpts struct {
-	Email       string `url:"email,omitempty"`
-	Name        string `url:"name,omitempty"`
-	CompanyName string `url:"companyName,omitempty"`
-	Deleted     bool   `url:"deleted,omitempty"`
-	CDN         string `url:"cdn,omitempty"`
-	Activated   bool   `url:"activated,omitempty"`
+	Email       string `param:"email,omitempty"`
+	Name        string `param:"name,omitempty"`
+	CompanyName string `param:"companyName,omitempty"`
+	Deleted     bool   `param:"deleted,omitempty"`
+	CDN         string `param:"cdn,omitempty"`
+	Activated   bool   `param:"activated,omitempty"`
 }
 
 // Create method creates a new client, the client will be activated automatically.
@@ -101,10 +102,16 @@ func (s *ClientsService) Get(ctx context.Context, clientID int) (*ClientAccount,
 }
 
 // List method gets a list of all Clients assigned to a Reseller.
-func (s *ClientsService) List(ctx context.Context, opts *ListOpts) ([]*ClientAccount, *http.Response, error) {
-	url, err := addOptions(ResellClientsURL, opts)
+func (s *ClientsService) List(ctx context.Context, opts ListOpts) ([]*ClientAccount, *http.Response, error) {
+
+	url := ResellClientsURL
+	queryParams, err := BuildQueryParameters(opts)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	if queryParams != "" {
+		url = strings.Join([]string{url, queryParams}, "?")
 	}
 
 	req, err := s.client.NewRequest(ctx, http.MethodGet, url, nil)
@@ -176,10 +183,23 @@ type PaidService struct {
 // This feature has been taken from the admin web-panel, is not documented at all.
 // It allows to pause CDN service for specific client.
 func (s *ClientsService) SuspendCDN(ctx context.Context, clientID int) (*http.Response, error) {
-	url, _ := addOptions(fmt.Sprintf(ResellClientServicesURL, clientID), struct {
-		Name string `url:"name"`
-	}{"CDN"})
 
+	url := fmt.Sprintf(ResellClientServicesURL, clientID)
+	opts := struct {
+		Name string `param:"name"`
+	}{"CDN"}
+
+	// Add service name param as "CDN" to get CDN-service details
+	queryParams, err := BuildQueryParameters(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if queryParams != "" {
+		url = strings.Join([]string{url, queryParams}, "?")
+	}
+
+	// Get CDN-service details
 	req, err := s.client.NewRequest(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -192,15 +212,17 @@ func (s *ClientsService) SuspendCDN(ctx context.Context, clientID int) (*http.Re
 		return resp, err
 	}
 
+	body := struct {
+		Enabled bool   `json:"enabled"`
+		Status  string `json:"status"`
+	}{false, "paused"}
+
 	// TODO: fixme
 	// The only one CDN service is supposed to be
 	req, err = s.client.NewRequest(ctx,
 		http.MethodPut,
 		fmt.Sprintf(ResellClientServiceURL, clientID, paidServices[0].ID),
-		struct {
-			Enabled bool   `json:"enabled"`
-			Status  string `json:"status"`
-		}{false, "paused"})
+		body)
 	if err != nil {
 		return nil, err
 	}
@@ -217,9 +239,21 @@ func (s *ClientsService) SuspendCDN(ctx context.Context, clientID int) (*http.Re
 // This feature has been taken from the admin web-panel, is not documented at all.
 // It allows to resume CDN service for specific client.
 func (s *ClientsService) ResumeCDN(ctx context.Context, clientID int) (*http.Response, error) {
-	url, _ := addOptions(fmt.Sprintf(ResellClientServicesURL, clientID), struct {
-		Name string `url:"name"`
-	}{"CDN"})
+
+	url := fmt.Sprintf(ResellClientServicesURL, clientID)
+	opts := struct {
+		Name string `param:"name"`
+	}{"CDN"}
+
+	// Add service name param as "CDN" to get CDN-service details
+	queryParams, err := BuildQueryParameters(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if queryParams != "" {
+		url = strings.Join([]string{url, queryParams}, "?")
+	}
 
 	req, err := s.client.NewRequest(ctx, http.MethodGet, url, nil)
 	if err != nil {
@@ -233,15 +267,17 @@ func (s *ClientsService) ResumeCDN(ctx context.Context, clientID int) (*http.Res
 		return resp, err
 	}
 
+	body := struct {
+		Enabled bool   `json:"enabled"`
+		Status  string `json:"status"`
+	}{true, "active"}
+
 	// TODO: fixme
 	// The only one CDN service is supposed to be
 	req, err = s.client.NewRequest(ctx,
 		http.MethodPut,
 		fmt.Sprintf(ResellClientServiceURL, clientID, paidServices[0].ID),
-		struct {
-			Enabled bool   `json:"enabled"`
-			Status  string `json:"status"`
-		}{true, "active"})
+		body)
 	if err != nil {
 		return nil, err
 	}

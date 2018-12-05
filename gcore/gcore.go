@@ -4,15 +4,16 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"reflect"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
-
-	"github.com/google/go-querystring/query"
 )
 
 const (
@@ -252,32 +253,61 @@ func ExtractResult(resp *http.Response, to interface{}) error {
 	return err
 }
 
-// addOptions adds the parameters in opt as URL query parameters to s. opt
-// must be a struct whose fields may contain "url" tags.
-func addOptions(s string, opt interface{}) (string, error) {
-	v := reflect.ValueOf(opt)
-	if v.Kind() == reflect.Ptr && v.IsNil() {
-		return s, nil
-	}
-
-	u, err := url.Parse(s)
-	if err != nil {
-		return s, err
-	}
-
-	qs, err := query.Values(opt)
-	if err != nil {
-		return s, err
-	}
-
-	u.RawQuery = qs.Encode()
-	return u.String(), nil
-}
-
+// IntPtr returns pointer to int.
 func IntPtr(v int) *int {
 	return &v
 }
 
+// StringPtr returns pointer to string.
 func StringPtr(v string) *string {
 	return &v
+}
+
+// BuildQueryParameters converts provided options struct to the string of URL parameters.
+func BuildQueryParameters(opts interface{}) (string, error) {
+	optsValue := reflect.ValueOf(opts)
+	if optsValue.Kind() != reflect.Struct {
+		return "", errors.New("provided options is not a structure")
+	}
+	optsType := reflect.TypeOf(opts)
+
+	params := url.Values{}
+
+	for i := 0; i < optsValue.NumField(); i++ {
+		fieldValue := optsValue.Field(i)
+		fieldType := optsType.Field(i)
+
+		queryTag := fieldType.Tag.Get("param")
+		if queryTag != "" {
+			if isZero(fieldValue) {
+				continue
+			}
+
+			tags := strings.Split(queryTag, ",")
+		loop:
+			switch fieldValue.Kind() {
+			case reflect.Ptr:
+				fieldValue = fieldValue.Elem()
+				goto loop
+			case reflect.String:
+				params.Add(tags[0], fieldValue.String())
+			case reflect.Int:
+				params.Add(tags[0], strconv.FormatInt(fieldValue.Int(), 10))
+			case reflect.Bool:
+				params.Add(tags[0], strconv.FormatBool(fieldValue.Bool()))
+			}
+		}
+	}
+
+	return params.Encode(), nil
+}
+
+// isZero checks if provided value is zero.
+func isZero(v reflect.Value) bool {
+	if v.Kind() == reflect.Ptr {
+		return v.IsNil()
+	}
+	z := reflect.Zero(v.Type())
+
+	return v.Interface() == z.Interface()
 }

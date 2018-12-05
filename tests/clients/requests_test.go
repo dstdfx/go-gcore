@@ -80,7 +80,7 @@ func TestClientsService_List(t *testing.T) {
 
 	resell := th.GetAuthenticatedResellerClient()
 
-	got, _, err := resell.Clients.List(context.Background(), &gcore.ListOpts{})
+	got, _, err := resell.Clients.List(context.Background(), gcore.ListOpts{})
 	expected := TestListClientsExpected
 	if err != nil {
 		t.Fatal(err)
