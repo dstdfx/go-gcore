@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	LibraryVersion = "2.0.0"
+	LibraryVersion = "2.1.0"
 	DefaultBaseURL = "https://api.gcdn.co"
 	UserAgent      = "go-gcore/" + LibraryVersion
 
