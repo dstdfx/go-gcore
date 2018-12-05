@@ -88,3 +88,55 @@ func TestResourcesService_Create(t *testing.T) {
 	}
 
 }
+
+func TestResourceService_Purge(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.SetupGCoreAuthServer()
+
+	th.Mux.HandleFunc(fmt.Sprintf(gcore.ResourcePurgeURL, TestResourceID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusCreated)
+		})
+
+	client := th.GetAuthenticatedCommonClient()
+	resp, err := client.Resources.Purge(context.Background(), TestResourceID, []string{})
+	if err != nil {
+		t.Errorf("Expected no error, but got: %s", err)
+	}
+
+	if resp.StatusCode != http.StatusCreated {
+		t.Errorf("Expected status code %d, got %d",
+			http.StatusCreated,
+			resp.StatusCode,
+		)
+	}
+}
+
+func TestResourceService_Prefetch(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.SetupGCoreAuthServer()
+
+	th.Mux.HandleFunc(fmt.Sprintf(gcore.ResourcePrefetchURL, TestResourceID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusCreated)
+		})
+
+	client := th.GetAuthenticatedCommonClient()
+	resp, err := client.Resources.Prefetch(context.Background(), TestResourceID,
+		[]string{"/file.jpg", "file2.jpg"})
+	if err != nil {
+		t.Errorf("Expected no error, but got: %s", err)
+	}
+
+	if resp.StatusCode != http.StatusCreated {
+		t.Errorf("Expected status code %d, got %d",
+			http.StatusCreated,
+			resp.StatusCode,
+		)
+	}
+
+}

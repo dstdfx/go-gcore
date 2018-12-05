@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	TestResourceID          = 42
 	TestGetResourceResponse = `{
   "id": 4478,
   "deleted": false,

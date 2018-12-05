@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	ResourcesURL     = "/resources"
-	ResourceURL      = "/resources/%d"
-	ResourcePurgeURL = "/resources/%d/purge"
+	ResourcesURL        = "/resources"
+	ResourceURL         = "/resources/%d"
+	ResourcePurgeURL    = "/resources/%d/purge"
+	ResourcePrefetchURL = "/resources/%d/prefetch"
 )
 
 type ResourcesService service
@@ -143,6 +144,29 @@ func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths []st
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPost,
 		fmt.Sprintf(ResourcePurgeURL, resourceID), pathsBody)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := s.client.Do(req, nil)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, nil
+}
+
+// Prefetch method pre-loads objects from given paths to
+// CDN-servers cache.
+func (s *ResourcesService) Prefetch(ctx context.Context, resourceID int, paths []string) (*http.Response, error) {
+	var pathsBody struct {
+		Paths []string `json:"paths"`
+	}
+	pathsBody.Paths = paths
+
+	req, err := s.client.NewRequest(ctx,
+		http.MethodPost,
+		fmt.Sprintf(ResourcePrefetchURL, resourceID), pathsBody)
 	if err != nil {
 		return nil, err
 	}
