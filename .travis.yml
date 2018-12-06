@@ -1,10 +1,10 @@
 sudo: false
 language: go
 install:
-  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $GOPATH/bin v1.11.2
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $GOPATH/bin v1.12
 go:
   - "1.11"
 before_script:
-  - make fulllint
+  - make golangci-lint
 script:
   - make test

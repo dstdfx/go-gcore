@@ -20,7 +20,10 @@ func TestResourcesService_Get(t *testing.T) {
 	expected := TestGetResourceExpected
 	th.Mux.HandleFunc(fmt.Sprintf(gcore.ResourceURL, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestGetResourceResponse))
+			_, err := w.Write([]byte(TestGetResourceResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	client := th.GetAuthenticatedCommonClient()
@@ -42,7 +45,10 @@ func TestResourcesService_List(t *testing.T) {
 
 	th.Mux.HandleFunc(gcore.ResourcesURL,
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestListResourcesResponse))
+			_, err := w.Write([]byte(TestListResourcesResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	client := th.GetAuthenticatedCommonClient()
@@ -65,7 +71,10 @@ func TestResourcesService_Create(t *testing.T) {
 
 	th.Mux.HandleFunc(gcore.ResourcesURL,
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestCreateResourceResponse))
+			_, err := w.Write([]byte(TestCreateResourceResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	resourceBody := gcore.CreateResourceBody{

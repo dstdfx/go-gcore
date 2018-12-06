@@ -18,7 +18,10 @@ func TestAccountService_Details(t *testing.T) {
 
 	th.Mux.HandleFunc(gcore.AccountDetailsURL,
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestAccountDetailResponse))
+			_, err := w.Write([]byte(TestAccountDetailResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	client := th.GetAuthenticatedCommonClient()

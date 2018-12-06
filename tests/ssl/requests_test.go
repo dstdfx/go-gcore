@@ -20,7 +20,10 @@ func TestSSLService_Add(t *testing.T) {
 	expected := TestCreateSSLExpected
 	th.Mux.HandleFunc(gcore.CertificatesURL,
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestCreateSSLResponse))
+			_, err := w.Write([]byte(TestCreateSSLResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	body := gcore.AddCertBody{
@@ -49,7 +52,10 @@ func TestSSLService_Get(t *testing.T) {
 	expected := TestGetSSLExpected
 	th.Mux.HandleFunc(fmt.Sprintf(gcore.CertificateURL, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestGetSSLResponse))
+			_, err := w.Write([]byte(TestGetSSLResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	client := th.GetAuthenticatedCommonClient()
@@ -72,7 +78,10 @@ func TestSSLService_List(t *testing.T) {
 	expected := TestListSSLExpected
 	th.Mux.HandleFunc(gcore.CertificatesURL,
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestListSSLResponse))
+			_, err := w.Write([]byte(TestListSSLResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	client := th.GetAuthenticatedCommonClient()
