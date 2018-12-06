@@ -20,7 +20,10 @@ func TestRulesService_Create(t *testing.T) {
 	expected := TestCreateRuleExpected
 	th.Mux.HandleFunc(fmt.Sprintf(gcore.RulesURL, FakeResourceID),
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestCreateRuleResponse))
+			_, err := w.Write([]byte(TestCreateRuleResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	body := gcore.CreateRuleBody{
@@ -54,7 +57,10 @@ func TestRulesService_Get(t *testing.T) {
 	expected := TestGetRuleExpected
 	th.Mux.HandleFunc(fmt.Sprintf(gcore.RuleURL, FakeResourceID, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestGetRuleResponse))
+			_, err := w.Write([]byte(TestGetRuleResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	client := th.GetAuthenticatedCommonClient()
@@ -77,7 +83,10 @@ func TestRulesService_List(t *testing.T) {
 	expected := TestListRuleExpected
 	th.Mux.HandleFunc(fmt.Sprintf(gcore.RulesURL, FakeResourceID),
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestListRuleResponse))
+			_, err := w.Write([]byte(TestListRuleResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	client := th.GetAuthenticatedCommonClient()

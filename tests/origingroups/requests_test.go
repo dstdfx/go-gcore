@@ -19,7 +19,10 @@ func TestOriginGroupsService_List(t *testing.T) {
 
 	th.Mux.HandleFunc(gcore.OriginGroupsURL,
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestListOriginGroupsResponse))
+			_, err := w.Write([]byte(TestListOriginGroupsResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 	client := th.GetAuthenticatedCommonClient()
 	expected := TestListOriginGroupsExpected
@@ -42,7 +45,10 @@ func TestOriginGroupsService_Get(t *testing.T) {
 	expected := TestGetOriginGroupExpected
 	th.Mux.HandleFunc(fmt.Sprintf(gcore.OriginGroupURL, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestGetOriginGroupResponse))
+			_, err := w.Write([]byte(TestGetOriginGroupResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	client := th.GetAuthenticatedCommonClient()
@@ -64,7 +70,10 @@ func TestOriginGroupsService_Create(t *testing.T) {
 
 	th.Mux.HandleFunc(gcore.OriginGroupsURL,
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestCreateOriginGroupResponse))
+			_, err := w.Write([]byte(TestCreateOriginGroupResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 	expected := TestCreateOriginGroupExpected
 	body := gcore.CreateOriginGroupBody{
@@ -93,7 +102,10 @@ func TestOriginGroupsService_Update(t *testing.T) {
 
 	th.Mux.HandleFunc(fmt.Sprintf(gcore.OriginGroupURL, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestUpdateOriginGroupResponse))
+			_, err := w.Write([]byte(TestUpdateOriginGroupResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	body := gcore.UpdateOriginGroupBody{

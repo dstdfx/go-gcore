@@ -21,7 +21,10 @@ var (
 
 	FakeTokenExpireDate = "2017-04-17T01:28:15.000Z"
 
-	FakeAuthOpts = gcore.AuthOptions{Username: "whatever", Password: "whatever"}
+	FakeAuthOpts = gcore.AuthOptions{
+		Username: "whatever",
+		Password: "whatever",
+	}
 )
 
 // SetupHTTP prepares the Mux and Server.
@@ -62,13 +65,13 @@ func MockClientURL() *url.URL {
 func GetAuthenticatedCommonClient() *gcore.CommonClient {
 	common := gcore.NewCommonClient(nil)
 	common.BaseURL = MockClientURL()
-	common.Authenticate(context.Background(), FakeAuthOpts)
+	_ = common.Authenticate(context.Background(), FakeAuthOpts)
 	return common
 }
 
 func GetAuthenticatedResellerClient() *gcore.ResellerClient {
 	resell := gcore.NewResellerClient(nil)
 	resell.BaseURL = MockClientURL()
-	resell.Authenticate(context.Background(), FakeAuthOpts)
+	_ = resell.Authenticate(context.Background(), FakeAuthOpts)
 	return resell
 }

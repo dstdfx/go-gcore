@@ -19,7 +19,10 @@ func TestClientsService_Create(t *testing.T) {
 
 	th.Mux.HandleFunc(gcore.ResellUsersURL,
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestCreateClientResponse))
+			_, err := w.Write([]byte(TestCreateClientResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	resell := th.GetAuthenticatedResellerClient()
@@ -52,7 +55,10 @@ func TestClientService_Get(t *testing.T) {
 
 	th.Mux.HandleFunc(fmt.Sprintf(gcore.ResellClientURL, TestGetClientExpected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestGetClientResponse))
+			_, err := w.Write([]byte(TestGetClientResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 	resell := th.GetAuthenticatedResellerClient()
 
@@ -75,7 +81,10 @@ func TestClientsService_List(t *testing.T) {
 
 	th.Mux.HandleFunc(gcore.ResellClientsURL,
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestListClientsResponse))
+			_, err := w.Write([]byte(TestListClientsResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	resell := th.GetAuthenticatedResellerClient()
@@ -99,7 +108,10 @@ func TestClientsService_Update(t *testing.T) {
 
 	th.Mux.HandleFunc(fmt.Sprintf(gcore.ResellClientURL, TestUpdateClientExpected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestUpdateClientResponse))
+			_, err := w.Write([]byte(TestUpdateClientResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	resell := th.GetAuthenticatedResellerClient()
@@ -128,7 +140,10 @@ func TestClientsService_GetCommonClient(t *testing.T) {
 
 	th.Mux.HandleFunc(fmt.Sprintf(gcore.ResellUserTokenURL, TestGetClientExpected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(TestUserTokenResponse))
+			_, err := w.Write([]byte(TestUserTokenResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
 
 	common, _, err := resell.Clients.GetCommonClient(context.Background(), TestGetClientExpected.ID)
