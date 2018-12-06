@@ -5,14 +5,8 @@ Unofficial Go library for accessing the G-Core CDN API
 
 It contains some parts of common and reseller G-Core CDN API.
 
-Offical docs are outdated, but anyway it's good to take a look at:
+Official docs are outdated, but anyway it's good to take a look at:
 - https://docs.gcorelabs.com/cdn/
-
-## Usage ##
-
-```go
-import "github.com/dstdfx/go-gcore"
-```
 
 ## Authentication ##
 
@@ -23,7 +17,10 @@ access different parts of the G-Core API. For example, authenticate as a common 
 
 ```go
 // Your registration credentials
-authOpts := gcore.AuthOptions{Username: "username", Password: "password"}
+authOpts := gcore.AuthOptions{
+    Username: "username",
+    Password: "password",
+}
 
 // Create a new Common client instance
 client := gcore.NewCommonClient(nil)
@@ -46,7 +43,10 @@ access different parts of the G-Core Reseller API. For example, authenticate as 
 
 ```go
 // Your reseller registration credentials
-authOpts := gcore.AuthOptions{Username: "username", Password: "password"}
+authOpts := gcore.AuthOptions{
+    Username: "username",
+    Password: "password",
+}
 
 // Create a new Reseller client instance
 client := gcore.NewResellerClient(nil)
@@ -56,8 +56,13 @@ client := gcore.NewResellerClient(nil)
 if err := client.Authenticate(context.Background(), authOpts); err != nil {
     panic(err)
 }
-// Get a list of activeted clients assigned to this reseller account
-clients, _, err := client.Clients.List(context.Background(), gcore.ListOpts{Activated:true})
+
+listOpts := gcore.ListOpts{
+    Activated: true,
+}
+
+// Get a list of activated clients assigned to this reseller account
+clients, _, err := client.Clients.List(context.Background(), listOpts)
 if err != nil {
     panic(err)
 }
