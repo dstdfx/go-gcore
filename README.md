@@ -23,7 +23,7 @@ authOpts := gcore.AuthOptions{
 }
 
 // Create a new Common client instance
-client := gcore.NewCommonClient(nil)
+client := gcore.NewCommonClient()
 
 // Get a token
 // Empty context just for the sake of simplicity here
@@ -49,7 +49,7 @@ authOpts := gcore.AuthOptions{
 }
 
 // Create a new Reseller client instance
-client := gcore.NewResellerClient(nil)
+client := gcore.NewResellerClient()
 
 // Get a token
 // Empty context just for the sake of simplicity here
