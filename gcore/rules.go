@@ -11,6 +11,8 @@ const (
 	RuleURL  = "/resources/%d/rules/%d"
 )
 
+// RulesService handles communication with the rule related methods
+// of the G-Core CDN API.
 type RulesService service
 
 // Rule represent G-Core's rule for CDN Resource.

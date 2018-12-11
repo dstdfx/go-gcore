@@ -16,6 +16,8 @@ const (
 	ResellClientServiceURL  = "/clients/%d/services/%d"
 )
 
+// ClientsService handles communication with the client related methods
+// of the G-Core CDN API.
 type ClientsService service
 
 // ClientAccount represents G-Core's client account.

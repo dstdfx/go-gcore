@@ -13,6 +13,8 @@ const (
 	ResourcePrefetchURL = "/resources/%d/prefetch"
 )
 
+// ResourcesService handles communication with the resource related methods
+// of the G-Core CDN API.
 type ResourcesService service
 
 // Resource represents G-Core's CDN Resource.
