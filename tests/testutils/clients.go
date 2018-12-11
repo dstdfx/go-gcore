@@ -63,14 +63,14 @@ func MockClientURL() *url.URL {
 }
 
 func GetAuthenticatedCommonClient() *gcore.CommonClient {
-	common := gcore.NewCommonClient(nil)
+	common := gcore.NewCommonClient()
 	common.BaseURL = MockClientURL()
 	_ = common.Authenticate(context.Background(), FakeAuthOpts)
 	return common
 }
 
 func GetAuthenticatedResellerClient() *gcore.ResellerClient {
-	resell := gcore.NewResellerClient(nil)
+	resell := gcore.NewResellerClient()
 	resell.BaseURL = MockClientURL()
 	_ = resell.Authenticate(context.Background(), FakeAuthOpts)
 	return resell

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -17,10 +18,41 @@ import (
 )
 
 const (
-	LibraryVersion = "2.1.0"
-	DefaultBaseURL = "https://api.gcdn.co"
-	UserAgent      = "go-gcore/" + LibraryVersion
+	// version represents library version.
+	version = "2.1.0"
 
+	// defaultUserAgent represents default value of User-Agent header.
+	defaultUserAgent = "go-gcore/" + version
+
+	// defaultBaseURL represents default base URL for accessing G-Core CDN API.
+	defaultBaseURL = "https://api.gcdn.co"
+
+	// defaultHTTPTimeout represents default timeout (in seconds) for HTTP
+	// requests.
+	defaultHTTPTimeout = 60
+
+	// defaultDialTimeout represents default timeout (in seconds) for HTTP
+	// connection establishments.
+	defaultDialTimeout = 5
+
+	// defaultTLSHandshakeTimeout represents default timeout (in seconds) for
+	// TSL handshake timeout.
+	defaultTLSHandshakeTimeout = 5
+
+	// defaultKeepAlive specifies default the keep-alive period for an active
+	// network connection.
+	defaultKeepAlive = 30
+
+	// MaxIdleConns controls default number of idle (keep-alive)
+	// connections across all hosts.
+	defaultMaxIdleConns = 100
+
+	// IdleConnTimeout is default amount of time an idle
+	// (keep-alive) connection will remain idle before closing
+	// itself.
+	defaultIdleConnTimeout = 90
+
+	// LoginURL represents default login URL for accessing G-Core CDN API.
 	LoginURL = "/auth/signin"
 )
 
@@ -112,16 +144,13 @@ func (c *Client) Authenticate(ctx context.Context, authOpts AuthOptions) error {
 }
 
 // NewCommonClient creates basic G-Core client.
-func NewCommonClient(httpClient *http.Client, logger ...GenericLogger) *CommonClient {
-	if httpClient == nil {
-		httpClient = http.DefaultClient
-	}
-	baseURL, _ := url.Parse(DefaultBaseURL)
+func NewCommonClient(logger ...GenericLogger) *CommonClient {
+	baseURL, _ := url.Parse(defaultBaseURL)
 
 	c := &Client{
-		client:    httpClient,
+		client:    NewHTTPClient(),
 		BaseURL:   baseURL,
-		UserAgent: UserAgent,
+		UserAgent: defaultUserAgent,
 		log:       SelectLogger(logger...),
 	}
 	c.common.client = c
@@ -133,29 +162,32 @@ func NewCommonClient(httpClient *http.Client, logger ...GenericLogger) *CommonCl
 	commonServices.Rules = (*RulesService)(&c.common)
 	commonServices.Certificates = (*CertService)(&c.common)
 
-	commonClient := &CommonClient{Client: c, CommonServices: commonServices}
+	commonClient := &CommonClient{
+		Client:         c,
+		CommonServices: commonServices,
+	}
 
 	return commonClient
 }
 
 // NewResellerClient creates reseller G-Core client.
-func NewResellerClient(httpClient *http.Client, logger ...GenericLogger) *ResellerClient {
-	if httpClient == nil {
-		httpClient = http.DefaultClient
-	}
-	baseURL, _ := url.Parse(DefaultBaseURL)
+func NewResellerClient(logger ...GenericLogger) *ResellerClient {
+	baseURL, _ := url.Parse(defaultBaseURL)
 
 	c := &Client{
-		client:    httpClient,
+		client:    NewHTTPClient(),
 		BaseURL:   baseURL,
-		UserAgent: UserAgent,
+		UserAgent: defaultUserAgent,
 		log:       SelectLogger(logger...),
 	}
 	c.common.client = c
 
 	resellerServices := ResellerServices{}
 	resellerServices.Clients = (*ClientsService)(&c.common)
-	resellClient := &ResellerClient{Client: c, ResellerServices: resellerServices}
+	resellClient := &ResellerClient{
+		Client:           c,
+		ResellerServices: resellerServices,
+	}
 
 	return resellClient
 }
@@ -310,4 +342,21 @@ func isZero(v reflect.Value) bool {
 	z := reflect.Zero(v.Type())
 
 	return v.Interface() == z.Interface()
+}
+
+// NewHTTPClient returns a reference to an initialized HTTP client with
+// configured timeouts.
+func NewHTTPClient() *http.Client {
+	return &http.Client{
+		Timeout: time.Second * defaultHTTPTimeout,
+		Transport: &http.Transport{
+			DialContext: (&net.Dialer{
+				Timeout:   time.Second * defaultDialTimeout,
+				KeepAlive: time.Second * defaultKeepAlive,
+			}).DialContext,
+			MaxIdleConns:        defaultMaxIdleConns,
+			IdleConnTimeout:     time.Second * defaultIdleConnTimeout,
+			TLSHandshakeTimeout: time.Second * defaultTLSHandshakeTimeout,
+		},
+	}
 }

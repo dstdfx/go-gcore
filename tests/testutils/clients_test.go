@@ -13,7 +13,7 @@ func TestNewCommonClient(t *testing.T) {
 
 	SetupGCoreAuthServer()
 
-	common := gcore.NewCommonClient(nil)
+	common := gcore.NewCommonClient()
 	common.BaseURL = MockClientURL()
 
 	err := common.Authenticate(context.Background(), FakeAuthOpts)
@@ -32,7 +32,7 @@ func TestNewResellerClient(t *testing.T) {
 
 	SetupGCoreAuthServer()
 
-	reseller := gcore.NewResellerClient(nil)
+	reseller := gcore.NewResellerClient()
 	reseller.BaseURL = MockClientURL()
 
 	err := reseller.Authenticate(context.Background(), FakeAuthOpts)
