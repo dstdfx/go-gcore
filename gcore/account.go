@@ -7,6 +7,8 @@ import (
 
 const AccountDetailsURL = "/clients/me"
 
+// AccountService handles communication with the account related methods
+// of the G-Core CDN API.
 type AccountService service
 
 // Account represents G-Core's account info.

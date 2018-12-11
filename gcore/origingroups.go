@@ -11,6 +11,8 @@ var (
 	OriginGroupURL  = "/originGroups/%d"
 )
 
+// OriginGroupsService handles communication with the origin group related methods
+// of the G-Core CDN API.
 type OriginGroupsService service
 
 // Origin represents G-Core's origin.

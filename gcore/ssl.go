@@ -11,6 +11,8 @@ const (
 	CertificateURL  = "/sslData/%d"
 )
 
+// CertService handles communication with the SSL/TLS certificate related methods
+// of the G-Core CDN API.
 type CertService service
 
 // CertSSL represents G-Core's CertSSL certificate
