@@ -16,15 +16,32 @@ type GenericLogger interface {
 // VoidLogger represents nil implementation of GenericLogger.
 type VoidLogger struct{}
 
-func (l *VoidLogger) Debug(args ...interface{})                 {}
+// Debug void implementation.
+func (l *VoidLogger) Debug(args ...interface{}) {}
+
+// Debugf void implementation.
 func (l *VoidLogger) Debugf(format string, args ...interface{}) {}
-func (l *VoidLogger) Info(args ...interface{})                  {}
-func (l *VoidLogger) Infof(format string, args ...interface{})  {}
-func (l *VoidLogger) Warn(args ...interface{})                  {}
-func (l *VoidLogger) Warnf(format string, args ...interface{})  {}
-func (l *VoidLogger) Error(args ...interface{})                 {}
+
+// Info void implementation.
+func (l *VoidLogger) Info(args ...interface{}) {}
+
+// Infof void implementation.
+func (l *VoidLogger) Infof(format string, args ...interface{}) {}
+
+// Warn void implementation.
+func (l *VoidLogger) Warn(args ...interface{}) {}
+
+// Warnf void implementation.
+func (l *VoidLogger) Warnf(format string, args ...interface{}) {}
+
+// Error void implementation.
+func (l *VoidLogger) Error(args ...interface{}) {}
+
+// Errorf void implementation.
 func (l *VoidLogger) Errorf(format string, args ...interface{}) {}
-func (l VoidLogger) Println(v ...interface{})                   {}
+
+// Println void implementation.
+func (l VoidLogger) Println(v ...interface{}) {}
 
 // SelectLogger returns one logger from given.
 func SelectLogger(logger ...GenericLogger) GenericLogger {

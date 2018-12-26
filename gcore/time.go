@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const DateFormat = "2006-01-02T15:04:05"
+const dateFormat = "2006-01-02T15:04:05"
 
 // Time represents custom time type
 type Time struct {
@@ -28,6 +28,6 @@ func (t *Time) UnmarshalJSON(b []byte) (err error) {
 		s = s[:len(s)-1]
 	}
 
-	t.Time, err = time.Parse(DateFormat, s)
+	t.Time, err = time.Parse(dateFormat, s)
 	return
 }
