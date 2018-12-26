@@ -1,9 +1,16 @@
-package rules
+package gcore
 
-import "github.com/dstdfx/go-gcore/gcore"
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"reflect"
+	"testing"
+)
 
+// Fixtures
 var (
-	TestCreateRuleResponse = `{
+	testCreateRuleResponse = `{
    "rule" : "/images",
    "originGroup" : null,
    "preset_applied" : false,
@@ -47,7 +54,7 @@ var (
    "weight" : 2,
    "originProtocol" : "HTTP"
 }`
-	TestGetRuleResponse = `{
+	testGetRuleResponse = `{
    "rule" : "/images",
    "originGroup" : null,
    "preset_applied" : false,
@@ -91,7 +98,7 @@ var (
    "weight" : 2,
    "originProtocol" : "HTTP"
 }`
-	TestListRuleResponse = `[
+	testListRuleResponse = `[
 {
    "rule" : "/images",
    "originGroup" : null,
@@ -138,8 +145,8 @@ var (
 )
 
 var (
-	FakeResourceID         = 4538
-	TestCreateRuleExpected = &gcore.Rule{
+	fakeResourceID         = 4538
+	testCreateRuleExpected = &Rule{
 		ID:             1861,
 		OriginProtocol: "HTTP",
 		RuleType:       0,
@@ -147,14 +154,14 @@ var (
 		Name:           "whatever",
 		Rule:           "/images",
 		PresetApplied:  false,
-		Options: gcore.Options{
-			CacheHTTPHeaders: &gcore.CacheHTTPHeaders{
+		Options: Options{
+			CacheHTTPHeaders: &CacheHTTPHeaders{
 				Enabled: true,
 				Value:   []string{"content-length", "x-token", "connection", "date", "server", "content-type"},
 			},
 		},
 	}
-	TestGetRuleExpected = &gcore.Rule{
+	testGetRuleExpected = &Rule{
 		ID:             1861,
 		OriginProtocol: "HTTP",
 		RuleType:       0,
@@ -162,14 +169,14 @@ var (
 		Name:           "whatever",
 		Rule:           "/images",
 		PresetApplied:  false,
-		Options: gcore.Options{
-			CacheHTTPHeaders: &gcore.CacheHTTPHeaders{
+		Options: Options{
+			CacheHTTPHeaders: &CacheHTTPHeaders{
 				Enabled: true,
 				Value:   []string{"content-length", "x-token", "connection", "date", "server", "content-type"},
 			},
 		},
 	}
-	TestListRuleExpected = []*gcore.Rule{
+	testListRuleExpected = []*Rule{
 		{
 			ID:             1861,
 			OriginProtocol: "HTTP",
@@ -178,8 +185,8 @@ var (
 			Name:           "whatever",
 			Rule:           "/images",
 			PresetApplied:  false,
-			Options: gcore.Options{
-				CacheHTTPHeaders: &gcore.CacheHTTPHeaders{
+			Options: Options{
+				CacheHTTPHeaders: &CacheHTTPHeaders{
 					Enabled: true,
 					Value:   []string{"content-length", "x-token", "connection", "date", "server", "content-type"},
 				},
@@ -187,3 +194,111 @@ var (
 		},
 	}
 )
+
+func TestRulesService_Create(t *testing.T) {
+	setupHTTP()
+	defer teardownHTTP()
+
+	setupGCoreAuthServer()
+
+	expected := testCreateRuleExpected
+	mux.HandleFunc(fmt.Sprintf(RulesURL, fakeResourceID),
+		func(w http.ResponseWriter, r *http.Request) {
+			_, err := w.Write([]byte(testCreateRuleResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
+		})
+
+	body := CreateRuleBody{
+		RuleType: 0,
+		Name:     "whatever",
+		Options: Options{
+			CacheHTTPHeaders: &CacheHTTPHeaders{
+				Enabled: true,
+				Value:   []string{"x-token"},
+			},
+		},
+	}
+
+	client := getAuthenticatedCommonClient()
+	got, _, err := client.Rules.Create(context.Background(), fakeResourceID, &body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("Expected: %+v, got %+v\n", expected, got)
+	}
+}
+
+func TestRulesService_Get(t *testing.T) {
+	setupHTTP()
+	defer teardownHTTP()
+
+	setupGCoreAuthServer()
+
+	expected := testGetRuleExpected
+	mux.HandleFunc(fmt.Sprintf(RuleURL, fakeResourceID, expected.ID),
+		func(w http.ResponseWriter, r *http.Request) {
+			_, err := w.Write([]byte(testGetRuleResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
+		})
+
+	client := getAuthenticatedCommonClient()
+	got, _, err := client.Rules.Get(context.Background(), fakeResourceID, expected.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("Expected: %+v, got %+v\n", expected, got)
+	}
+}
+
+func TestRulesService_List(t *testing.T) {
+	setupHTTP()
+	defer teardownHTTP()
+
+	setupGCoreAuthServer()
+
+	expected := testListRuleExpected
+	mux.HandleFunc(fmt.Sprintf(RulesURL, fakeResourceID),
+		func(w http.ResponseWriter, r *http.Request) {
+			_, err := w.Write([]byte(testListRuleResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
+		})
+
+	client := getAuthenticatedCommonClient()
+	got, _, err := client.Rules.List(context.Background(), fakeResourceID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("Expected: %+v, got %+v\n", expected, got)
+	}
+}
+
+func TestRulesService_Delete(t *testing.T) {
+	setupHTTP()
+	defer teardownHTTP()
+
+	setupGCoreAuthServer()
+
+	expected := testGetRuleExpected
+	mux.HandleFunc(fmt.Sprintf(RuleURL, fakeResourceID, expected.ID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusNoContent)
+		})
+
+	client := getAuthenticatedCommonClient()
+	_, err := client.Rules.Delete(context.Background(), fakeResourceID, expected.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
