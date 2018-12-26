@@ -46,7 +46,7 @@ type Group struct {
 	Name string `json:"name"`
 }
 
-// Get method returns details info for the account.
+// Details method returns details info for the account.
 func (s *AccountService) Details(ctx context.Context) (*Account, *http.Response, error) {
 
 	req, err := s.client.NewRequest(ctx, http.MethodGet, accountDetailsURL, nil)
