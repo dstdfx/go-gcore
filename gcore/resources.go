@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	ResourcesURL        = "/resources"
-	ResourceURL         = "/resources/%d"
-	ResourcePurgeURL    = "/resources/%d/purge"
-	ResourcePrefetchURL = "/resources/%d/prefetch"
+	resourcesURL        = "/resources"
+	resourceURL         = "/resources/%d"
+	resourcePurgeURL    = "/resources/%d/purge"
+	resourcePrefetchURL = "/resources/%d/prefetch"
 )
 
 // ResourcesService handles communication with the resource related methods
@@ -67,7 +67,7 @@ type UpdateResourceBody struct {
 func (s *ResourcesService) Update(ctx context.Context, resourceID int, body *UpdateResourceBody) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPut,
-		fmt.Sprintf(ResourceURL, resourceID), body)
+		fmt.Sprintf(resourceURL, resourceID), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -84,7 +84,7 @@ func (s *ResourcesService) Update(ctx context.Context, resourceID int, body *Upd
 
 // List method returns all resources for this account.
 func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, http.MethodGet, ResourcesURL, nil)
+	req, err := s.client.NewRequest(ctx, http.MethodGet, resourcesURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -103,7 +103,7 @@ func (s *ResourcesService) List(ctx context.Context) ([]*Resource, *http.Respons
 func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(ResourceURL, resourceID), nil)
+		fmt.Sprintf(resourceURL, resourceID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -120,7 +120,7 @@ func (s *ResourcesService) Get(ctx context.Context, resourceID int) (*Resource, 
 
 // Create method creates resource.
 func (s *ResourcesService) Create(ctx context.Context, body *CreateResourceBody) (*Resource, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, http.MethodPost, ResourcesURL, body)
+	req, err := s.client.NewRequest(ctx, http.MethodPost, resourcesURL, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -145,7 +145,7 @@ func (s *ResourcesService) Purge(ctx context.Context, resourceID int, paths []st
 
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPost,
-		fmt.Sprintf(ResourcePurgeURL, resourceID), pathsBody)
+		fmt.Sprintf(resourcePurgeURL, resourceID), pathsBody)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +168,7 @@ func (s *ResourcesService) Prefetch(ctx context.Context, resourceID int, paths [
 
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPost,
-		fmt.Sprintf(ResourcePrefetchURL, resourceID), pathsBody)
+		fmt.Sprintf(resourcePrefetchURL, resourceID), pathsBody)
 	if err != nil {
 		return nil, err
 	}

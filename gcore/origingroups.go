@@ -6,9 +6,9 @@ import (
 	"net/http"
 )
 
-var (
-	OriginGroupsURL = "/originGroups"
-	OriginGroupURL  = "/originGroups/%d"
+const (
+	originGroupsURL = "/originGroups"
+	originGroupURL  = "/originGroups/%d"
 )
 
 // OriginGroupsService handles communication with the origin group related methods
@@ -48,7 +48,7 @@ type CreateOriginGroupBody struct {
 
 // List method returns list information about Origins Groups and Origin Sources.
 func (s *OriginGroupsService) List(ctx context.Context) ([]*OriginGroup, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, http.MethodGet, OriginGroupsURL, nil)
+	req, err := s.client.NewRequest(ctx, http.MethodGet, originGroupsURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -67,7 +67,7 @@ func (s *OriginGroupsService) List(ctx context.Context) ([]*OriginGroup, *http.R
 func (s *OriginGroupsService) Get(ctx context.Context, originGroupID int) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(OriginGroupURL, originGroupID), nil)
+		fmt.Sprintf(originGroupURL, originGroupID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -84,7 +84,7 @@ func (s *OriginGroupsService) Get(ctx context.Context, originGroupID int) (*Orig
 
 // Create method creates origin group.
 func (s *OriginGroupsService) Create(ctx context.Context, body *CreateOriginGroupBody) (*OriginGroup, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, http.MethodPost, OriginGroupsURL, body)
+	req, err := s.client.NewRequest(ctx, http.MethodPost, originGroupsURL, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -103,7 +103,7 @@ func (s *OriginGroupsService) Create(ctx context.Context, body *CreateOriginGrou
 func (s *OriginGroupsService) Update(ctx context.Context, originGroupID int, body *UpdateOriginGroupBody) (*OriginGroup, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodPut,
-		fmt.Sprintf(OriginGroupURL, originGroupID), body)
+		fmt.Sprintf(originGroupURL, originGroupID), body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -122,7 +122,7 @@ func (s *OriginGroupsService) Update(ctx context.Context, originGroupID int, bod
 func (s *OriginGroupsService) Delete(ctx context.Context, originGroupID int) (*http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodDelete,
-		fmt.Sprintf(OriginGroupURL, originGroupID), nil)
+		fmt.Sprintf(originGroupURL, originGroupID), nil)
 	if err != nil {
 		return nil, err
 	}

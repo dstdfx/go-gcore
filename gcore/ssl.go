@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	CertificatesURL = "/sslData"
-	CertificateURL  = "/sslData/%d"
+	certificatesURL = "/sslData"
+	certificateURL  = "/sslData/%d"
 )
 
 // CertService handles communication with the SSL/TLS certificate related methods
@@ -39,7 +39,7 @@ type AddCertBody struct {
 
 // List returns list of all SSL certificates.
 func (s *CertService) List(ctx context.Context) ([]*CertSSL, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, http.MethodGet, CertificatesURL, nil)
+	req, err := s.client.NewRequest(ctx, http.MethodGet, certificatesURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -58,7 +58,7 @@ func (s *CertService) List(ctx context.Context) ([]*CertSSL, *http.Response, err
 func (s *CertService) Get(ctx context.Context, certID int) (*CertSSL, *http.Response, error) {
 	req, err := s.client.NewRequest(ctx,
 		http.MethodGet,
-		fmt.Sprintf(CertificateURL, certID), nil)
+		fmt.Sprintf(certificateURL, certID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -75,7 +75,7 @@ func (s *CertService) Get(ctx context.Context, certID int) (*CertSSL, *http.Resp
 
 // Delete method deletes specific SSL certificate.
 func (s *CertService) Delete(ctx context.Context, certID int) (*http.Response, error) {
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, fmt.Sprintf(CertificateURL, certID), nil)
+	req, err := s.client.NewRequest(ctx, http.MethodDelete, fmt.Sprintf(certificateURL, certID), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (s *CertService) Delete(ctx context.Context, certID int) (*http.Response, e
 // Paste all strings of the certificate(s) and the private key in one string parameter.
 // Each certificate in chain and the private key should be divided with the "\n" symbol.
 func (s *CertService) Add(ctx context.Context, body *AddCertBody) (*CertSSL, *http.Response, error) {
-	req, err := s.client.NewRequest(ctx, http.MethodPost, CertificatesURL, body)
+	req, err := s.client.NewRequest(ctx, http.MethodPost, certificatesURL, body)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -99,7 +99,7 @@ func TestSSLService_Add(t *testing.T) {
 	setupGCoreAuthServer()
 
 	expected := testCreateSSLExpected
-	mux.HandleFunc(CertificatesURL,
+	mux.HandleFunc(certificatesURL,
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testCreateSSLResponse))
 			if err != nil {
@@ -131,7 +131,7 @@ func TestSSLService_Get(t *testing.T) {
 	setupGCoreAuthServer()
 
 	expected := testGetSSLExpected
-	mux.HandleFunc(fmt.Sprintf(CertificateURL, expected.ID),
+	mux.HandleFunc(fmt.Sprintf(certificateURL, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testGetSSLResponse))
 			if err != nil {
@@ -157,7 +157,7 @@ func TestSSLService_List(t *testing.T) {
 	setupGCoreAuthServer()
 
 	expected := testListSSLExpected
-	mux.HandleFunc(CertificatesURL,
+	mux.HandleFunc(certificatesURL,
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testListSSLResponse))
 			if err != nil {
@@ -183,7 +183,7 @@ func TestSSLService_Delete(t *testing.T) {
 	setupGCoreAuthServer()
 
 	expected := testGetSSLExpected
-	mux.HandleFunc(fmt.Sprintf(CertificateURL, expected.ID),
+	mux.HandleFunc(fmt.Sprintf(certificateURL, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNoContent)
 		})

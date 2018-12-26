@@ -63,7 +63,7 @@ func TestAccountService_Details(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(AccountDetailsURL,
+	mux.HandleFunc(accountDetailsURL,
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testAccountDetailResponse))
 			if err != nil {

@@ -255,7 +255,7 @@ func TestClientsService_Create(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(ResellUsersURL,
+	mux.HandleFunc(resellUsersURL,
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testCreateClientResponse))
 			if err != nil {
@@ -291,7 +291,7 @@ func TestClientService_Get(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(fmt.Sprintf(ResellClientURL, testGetClientExpected.ID),
+	mux.HandleFunc(fmt.Sprintf(resellClientURL, testGetClientExpected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testGetClientResponse))
 			if err != nil {
@@ -317,7 +317,7 @@ func TestClientsService_List(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(ResellClientsURL,
+	mux.HandleFunc(resellClientsURL,
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testListClientsResponse))
 			if err != nil {
@@ -344,7 +344,7 @@ func TestClientsService_Update(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(fmt.Sprintf(ResellClientURL, testUpdateClientExpected.ID),
+	mux.HandleFunc(fmt.Sprintf(resellClientURL, testUpdateClientExpected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testUpdateClientResponse))
 			if err != nil {
@@ -376,7 +376,7 @@ func TestClientsService_GetCommonClient(t *testing.T) {
 
 	resell := getAuthenticatedResellerClient()
 
-	mux.HandleFunc(fmt.Sprintf(ResellUserTokenURL, testGetClientExpected.ID),
+	mux.HandleFunc(fmt.Sprintf(resellUserTokenURL, testGetClientExpected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testUserTokenResponse))
 			if err != nil {

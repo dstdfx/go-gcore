@@ -38,7 +38,7 @@ func teardownHTTP() {
 
 // Setup endpoints for getting GCore token
 func setupGCoreAuthServer() {
-	mux.HandleFunc(LoginURL, func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(loginURL, func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `{
 			"token": "%s",
 			"expire": "%s"

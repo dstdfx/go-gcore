@@ -360,7 +360,7 @@ func TestResourcesService_Get(t *testing.T) {
 	setupGCoreAuthServer()
 
 	expected := testGetResourceExpected
-	mux.HandleFunc(fmt.Sprintf(ResourceURL, expected.ID),
+	mux.HandleFunc(fmt.Sprintf(resourceURL, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testGetResourceResponse))
 			if err != nil {
@@ -385,7 +385,7 @@ func TestResourcesService_List(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(ResourcesURL,
+	mux.HandleFunc(resourcesURL,
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testListResourcesResponse))
 			if err != nil {
@@ -411,7 +411,7 @@ func TestResourcesService_Create(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(ResourcesURL,
+	mux.HandleFunc(resourcesURL,
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testCreateResourceResponse))
 			if err != nil {
@@ -446,7 +446,7 @@ func TestResourceService_Purge(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(fmt.Sprintf(ResourcePurgeURL, testResourceID),
+	mux.HandleFunc(fmt.Sprintf(resourcePurgeURL, testResourceID),
 		func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusCreated)
 		})
@@ -471,7 +471,7 @@ func TestResourceService_Prefetch(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(fmt.Sprintf(ResourcePrefetchURL, testResourceID),
+	mux.HandleFunc(fmt.Sprintf(resourcePrefetchURL, testResourceID),
 		func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusCreated)
 		})

@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-const AccountDetailsURL = "/clients/me"
+const accountDetailsURL = "/clients/me"
 
 // AccountService handles communication with the account related methods
 // of the G-Core CDN API.
@@ -49,7 +49,7 @@ type Group struct {
 // Get method returns details info for the account.
 func (s *AccountService) Details(ctx context.Context) (*Account, *http.Response, error) {
 
-	req, err := s.client.NewRequest(ctx, http.MethodGet, AccountDetailsURL, nil)
+	req, err := s.client.NewRequest(ctx, http.MethodGet, accountDetailsURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
