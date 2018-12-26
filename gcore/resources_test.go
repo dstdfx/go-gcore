@@ -1,14 +1,17 @@
-package resources
+package gcore
 
 import (
+	"context"
+	"fmt"
+	"net/http"
+	"reflect"
+	"testing"
 	"time"
-
-	"github.com/dstdfx/go-gcore/gcore"
 )
 
 var (
-	TestResourceID          = 42
-	TestGetResourceResponse = `{
+	testResourceID          = 42
+	testGetResourceResponse = `{
   "id": 4478,
   "deleted": false,
   "secondaryHostnames": [],
@@ -68,7 +71,7 @@ var (
   "sslData": 1189
 }`
 
-	TestCreateResourceResponse = `{
+	testCreateResourceResponse = `{
   "id": 4478,
   "deleted": false,
   "secondaryHostnames": [],
@@ -128,7 +131,7 @@ var (
   "sslData": 1189
 }`
 
-	TestListResourcesResponse = `[{
+	testListResourcesResponse = `[{
   "id": 4478,
   "deleted": false,
   "secondaryHostnames": [],
@@ -190,7 +193,7 @@ var (
 )
 
 var (
-	TestGetResourceExpected = &gcore.Resource{
+	testGetResourceExpected = &Resource{
 		ID:                 4478,
 		Name:               nil,
 		Cname:              "gcdn.example.me",
@@ -202,17 +205,17 @@ var (
 		OriginProtocol:     "HTTPS",
 		Active:             true,
 		SecondaryHostnames: []string{},
-		Options: &gcore.Options{
+		Options: &Options{
 			Slice:             nil,
 			GZIPOn:            nil,
 			IgnoreQueryString: nil,
-			HostHeader: &gcore.HostHeader{
+			HostHeader: &HostHeader{
 				Enabled: true,
 				Value:   "131231.example.ru",
 			},
 			StaticHeaders:      nil,
 			AllowedHTTPMethods: nil,
-			Stale: &gcore.Stale{
+			Stale: &Stale{
 				Enabled: true,
 				Value:   []string{"error", "updating"},
 			},
@@ -221,7 +224,7 @@ var (
 			Rewrite:              nil,
 			ForceReturn:          nil,
 			SecureKey:            nil,
-			CacheExpire: &gcore.CacheExpire{
+			CacheExpire: &CacheExpire{
 				Enabled: true,
 				Value:   345600,
 			},
@@ -236,14 +239,14 @@ var (
 			IPAddressACL:       nil,
 		},
 		Status:     "active",
-		Rules:      []gcore.Rule{},
+		Rules:      []Rule{},
 		SslEnabled: true,
-		SslData:    gcore.IntPtr(1189),
-		CreatedAt:  gcore.NewTime(time.Date(2018, time.April, 9, 11, 31, 40, 0, time.UTC)),
-		UpdatedAt:  gcore.NewTime(time.Date(2018, time.April, 9, 11, 32, 31, 0, time.UTC)),
+		SslData:    IntPtr(1189),
+		CreatedAt:  NewTime(time.Date(2018, time.April, 9, 11, 31, 40, 0, time.UTC)),
+		UpdatedAt:  NewTime(time.Date(2018, time.April, 9, 11, 32, 31, 0, time.UTC)),
 	}
 
-	TestListResourcesExpected = []*gcore.Resource{{
+	testListResourcesExpected = []*Resource{{
 		ID:                 4478,
 		Name:               nil,
 		Cname:              "gcdn.example.me",
@@ -255,17 +258,17 @@ var (
 		OriginGroup:        7260,
 		OriginProtocol:     "HTTPS",
 		SecondaryHostnames: []string{},
-		Options: &gcore.Options{
+		Options: &Options{
 			Slice:             nil,
 			GZIPOn:            nil,
 			IgnoreQueryString: nil,
-			HostHeader: &gcore.HostHeader{
+			HostHeader: &HostHeader{
 				Enabled: true,
 				Value:   "131231.example.ru",
 			},
 			StaticHeaders:      nil,
 			AllowedHTTPMethods: nil,
-			Stale: &gcore.Stale{
+			Stale: &Stale{
 				Enabled: true,
 				Value:   []string{"error", "updating"},
 			},
@@ -274,7 +277,7 @@ var (
 			Rewrite:              nil,
 			ForceReturn:          nil,
 			SecureKey:            nil,
-			CacheExpire: &gcore.CacheExpire{
+			CacheExpire: &CacheExpire{
 				Enabled: true,
 				Value:   345600,
 			},
@@ -289,14 +292,14 @@ var (
 			IPAddressACL:       nil,
 		},
 		Status:     "active",
-		Rules:      []gcore.Rule{},
+		Rules:      []Rule{},
 		SslEnabled: true,
-		SslData:    gcore.IntPtr(1189),
-		CreatedAt:  gcore.NewTime(time.Date(2018, time.April, 9, 11, 31, 40, 0, time.UTC)),
-		UpdatedAt:  gcore.NewTime(time.Date(2018, time.April, 9, 11, 32, 31, 0, time.UTC)),
+		SslData:    IntPtr(1189),
+		CreatedAt:  NewTime(time.Date(2018, time.April, 9, 11, 31, 40, 0, time.UTC)),
+		UpdatedAt:  NewTime(time.Date(2018, time.April, 9, 11, 32, 31, 0, time.UTC)),
 	}}
 
-	TestCreateResourceExpected = &gcore.Resource{
+	testCreateResourceExpected = &Resource{
 		ID:                 4478,
 		Name:               nil,
 		Cname:              "gcdn.example.me",
@@ -308,17 +311,17 @@ var (
 		OriginGroup:        7260,
 		OriginProtocol:     "HTTPS",
 		SecondaryHostnames: []string{},
-		Options: &gcore.Options{
+		Options: &Options{
 			Slice:             nil,
 			GZIPOn:            nil,
 			IgnoreQueryString: nil,
-			HostHeader: &gcore.HostHeader{
+			HostHeader: &HostHeader{
 				Enabled: true,
 				Value:   "131231.example.ru",
 			},
 			StaticHeaders:      nil,
 			AllowedHTTPMethods: nil,
-			Stale: &gcore.Stale{
+			Stale: &Stale{
 				Enabled: true,
 				Value:   []string{"error", "updating"},
 			},
@@ -327,7 +330,7 @@ var (
 			Rewrite:              nil,
 			ForceReturn:          nil,
 			SecureKey:            nil,
-			CacheExpire: &gcore.CacheExpire{
+			CacheExpire: &CacheExpire{
 				Enabled: true,
 				Value:   345600,
 			},
@@ -342,10 +345,149 @@ var (
 			IPAddressACL:       nil,
 		},
 		Status:     "active",
-		Rules:      []gcore.Rule{},
+		Rules:      []Rule{},
 		SslEnabled: true,
-		SslData:    gcore.IntPtr(1189),
-		CreatedAt:  gcore.NewTime(time.Date(2018, time.April, 9, 11, 31, 40, 0, time.UTC)),
-		UpdatedAt:  gcore.NewTime(time.Date(2018, time.April, 9, 11, 32, 31, 0, time.UTC)),
+		SslData:    IntPtr(1189),
+		CreatedAt:  NewTime(time.Date(2018, time.April, 9, 11, 31, 40, 0, time.UTC)),
+		UpdatedAt:  NewTime(time.Date(2018, time.April, 9, 11, 32, 31, 0, time.UTC)),
 	}
 )
+
+func TestResourcesService_Get(t *testing.T) {
+	setupHTTP()
+	defer teardownHTTP()
+
+	setupGCoreAuthServer()
+
+	expected := testGetResourceExpected
+	mux.HandleFunc(fmt.Sprintf(ResourceURL, expected.ID),
+		func(w http.ResponseWriter, r *http.Request) {
+			_, err := w.Write([]byte(testGetResourceResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
+		})
+
+	client := getAuthenticatedCommonClient()
+	got, _, err := client.Resources.Get(context.Background(), expected.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("Expected: %+v, got %+v\n", expected, got)
+	}
+}
+
+func TestResourcesService_List(t *testing.T) {
+	setupHTTP()
+	defer teardownHTTP()
+
+	setupGCoreAuthServer()
+
+	mux.HandleFunc(ResourcesURL,
+		func(w http.ResponseWriter, r *http.Request) {
+			_, err := w.Write([]byte(testListResourcesResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
+		})
+
+	client := getAuthenticatedCommonClient()
+	expected := testListResourcesExpected
+	got, _, err := client.Resources.List(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("Expected: %+v, got %+v\n", expected, got)
+	}
+}
+
+func TestResourcesService_Create(t *testing.T) {
+	setupHTTP()
+	defer teardownHTTP()
+
+	setupGCoreAuthServer()
+
+	mux.HandleFunc(ResourcesURL,
+		func(w http.ResponseWriter, r *http.Request) {
+			_, err := w.Write([]byte(testCreateResourceResponse))
+			if err != nil {
+				t.Fatal(err)
+			}
+		})
+
+	resourceBody := CreateResourceBody{
+		Cname: "cdn.site.com",
+		SecondaryHostnames: []string{
+			"cdn1.yoursite.com",
+			"cdn2.yoursite.com",
+		},
+	}
+
+	client := getAuthenticatedCommonClient()
+	expected := testCreateResourceExpected
+	got, _, err := client.Resources.Create(context.Background(), &resourceBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("Expected: %+v, got %+v\n", expected, got)
+	}
+
+}
+
+func TestResourceService_Purge(t *testing.T) {
+	setupHTTP()
+	defer teardownHTTP()
+
+	setupGCoreAuthServer()
+
+	mux.HandleFunc(fmt.Sprintf(ResourcePurgeURL, testResourceID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusCreated)
+		})
+
+	client := getAuthenticatedCommonClient()
+	resp, err := client.Resources.Purge(context.Background(), testResourceID, []string{})
+	if err != nil {
+		t.Errorf("Expected no error, but got: %s", err)
+	}
+
+	if resp.StatusCode != http.StatusCreated {
+		t.Errorf("Expected status code %d, got %d",
+			http.StatusCreated,
+			resp.StatusCode,
+		)
+	}
+}
+
+func TestResourceService_Prefetch(t *testing.T) {
+	setupHTTP()
+	defer teardownHTTP()
+
+	setupGCoreAuthServer()
+
+	mux.HandleFunc(fmt.Sprintf(ResourcePrefetchURL, testResourceID),
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusCreated)
+		})
+
+	client := getAuthenticatedCommonClient()
+	resp, err := client.Resources.Prefetch(context.Background(), testResourceID,
+		[]string{"/file.jpg", "file2.jpg"})
+	if err != nil {
+		t.Errorf("Expected no error, but got: %s", err)
+	}
+
+	if resp.StatusCode != http.StatusCreated {
+		t.Errorf("Expected status code %d, got %d",
+			http.StatusCreated,
+			resp.StatusCode,
+		)
+	}
+
+}
