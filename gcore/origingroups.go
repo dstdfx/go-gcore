@@ -23,7 +23,7 @@ type Origin struct {
 	Source  string `json:"source"`
 }
 
-// Origin represents G-Core's origin group.
+// OriginGroup represents G-Core's origin group.
 type OriginGroup struct {
 	ID        int      `json:"id"`
 	Name      string   `json:"name"`
