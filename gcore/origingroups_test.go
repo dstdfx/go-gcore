@@ -190,7 +190,7 @@ func TestOriginGroupsService_List(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(OriginGroupsURL,
+	mux.HandleFunc(originGroupsURL,
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testListOriginGroupsResponse))
 			if err != nil {
@@ -216,7 +216,7 @@ func TestOriginGroupsService_Get(t *testing.T) {
 	setupGCoreAuthServer()
 
 	expected := testGetOriginGroupExpected
-	mux.HandleFunc(fmt.Sprintf(OriginGroupURL, expected.ID),
+	mux.HandleFunc(fmt.Sprintf(originGroupURL, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testGetOriginGroupResponse))
 			if err != nil {
@@ -241,7 +241,7 @@ func TestOriginGroupsService_Create(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(OriginGroupsURL,
+	mux.HandleFunc(originGroupsURL,
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testCreateOriginGroupResponse))
 			if err != nil {
@@ -273,7 +273,7 @@ func TestOriginGroupsService_Update(t *testing.T) {
 
 	expected := testUpdateOriginGroupExpected
 
-	mux.HandleFunc(fmt.Sprintf(OriginGroupURL, expected.ID),
+	mux.HandleFunc(fmt.Sprintf(originGroupURL, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testUpdateOriginGroupResponse))
 			if err != nil {
@@ -304,7 +304,7 @@ func TestOriginGroupsService_Delete(t *testing.T) {
 
 	setupGCoreAuthServer()
 
-	mux.HandleFunc(fmt.Sprintf(OriginGroupURL, testGetOriginGroupExpected.ID),
+	mux.HandleFunc(fmt.Sprintf(originGroupURL, testGetOriginGroupExpected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		})

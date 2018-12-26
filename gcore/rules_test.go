@@ -202,7 +202,7 @@ func TestRulesService_Create(t *testing.T) {
 	setupGCoreAuthServer()
 
 	expected := testCreateRuleExpected
-	mux.HandleFunc(fmt.Sprintf(RulesURL, fakeResourceID),
+	mux.HandleFunc(fmt.Sprintf(rulesURL, fakeResourceID),
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testCreateRuleResponse))
 			if err != nil {
@@ -239,7 +239,7 @@ func TestRulesService_Get(t *testing.T) {
 	setupGCoreAuthServer()
 
 	expected := testGetRuleExpected
-	mux.HandleFunc(fmt.Sprintf(RuleURL, fakeResourceID, expected.ID),
+	mux.HandleFunc(fmt.Sprintf(ruleURL, fakeResourceID, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testGetRuleResponse))
 			if err != nil {
@@ -265,7 +265,7 @@ func TestRulesService_List(t *testing.T) {
 	setupGCoreAuthServer()
 
 	expected := testListRuleExpected
-	mux.HandleFunc(fmt.Sprintf(RulesURL, fakeResourceID),
+	mux.HandleFunc(fmt.Sprintf(rulesURL, fakeResourceID),
 		func(w http.ResponseWriter, r *http.Request) {
 			_, err := w.Write([]byte(testListRuleResponse))
 			if err != nil {
@@ -291,7 +291,7 @@ func TestRulesService_Delete(t *testing.T) {
 	setupGCoreAuthServer()
 
 	expected := testGetRuleExpected
-	mux.HandleFunc(fmt.Sprintf(RuleURL, fakeResourceID, expected.ID),
+	mux.HandleFunc(fmt.Sprintf(ruleURL, fakeResourceID, expected.ID),
 		func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNoContent)
 		})

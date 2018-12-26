@@ -52,8 +52,8 @@ const (
 	// itself.
 	defaultIdleConnTimeout = 90
 
-	// LoginURL represents default login URL for accessing G-Core CDN API.
-	LoginURL = "/auth/signin"
+	// loginURL represents default login URL for accessing G-Core CDN API.
+	loginURL = "/auth/signin"
 )
 
 // Client manages communication with G-Core CDN API.
@@ -107,7 +107,7 @@ type ResellerServices struct {
 	Clients *ClientsService
 }
 
-// G-Core account credentials.
+// AuthOptions is G-Core account credentials.
 type AuthOptions struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -122,7 +122,7 @@ type Token struct {
 // Authenticate gets API Token, if client already took a token, check if it's valid.
 // If it's not, get new one.
 func (c *Client) Authenticate(ctx context.Context, authOpts AuthOptions) error {
-	req, err := c.NewRequest(ctx, http.MethodPost, LoginURL, authOpts)
+	req, err := c.NewRequest(ctx, http.MethodPost, loginURL, authOpts)
 	if err != nil {
 		return err
 	}
