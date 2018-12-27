@@ -1,6 +1,7 @@
 # go-gcore
 [![Build Status](https://travis-ci.org/dstdfx/go-gcore.svg?branch=master)](https://travis-ci.org/dstdfx/go-gcore)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dstdfx/go-gcore)](https://goreportcard.com/report/github.com/dstdfx/go-gcore)
+[![Coverage Status](https://coveralls.io/repos/github/dstdfx/go-gcore/badge.svg?branch=feature%2Fcoveralls)](https://coveralls.io/github/dstdfx/go-gcore?branch=feature%2Fcoveralls)
 
 Unofficial Go library for accessing the G-Core CDN API
 
