@@ -1,4 +1,4 @@
 #!/bin/bash
 
 echo "==> Running 'gotest' ..."
-go test -count=1 -v ./gcore/.
+go test -covermode=count -coverprofile=coverage.out -v ./gcore/.
