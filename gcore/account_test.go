@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"reflect"
 	"testing"
+
+	th "github.com/dstdfx/go-gcore/gcore/internal/testhelper"
 )
 
 // Fixtures
@@ -58,25 +60,34 @@ var testAccountDetailExpected = &Account{
 }
 
 func TestAccountService_Details(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
 
-	mux.HandleFunc(accountDetailsURL,
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testAccountDetailResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         accountDetailsURL,
+		RawResponse: testAccountDetailResponse,
+		Method:      http.MethodGet,
+		Status:      http.StatusOK,
+		CallFlag:    &endpointCalled,
+	}
 
-	client := getAuthenticatedCommonClient()
+	th.HandleReqWithoutBody(t, handleOpts)
+
+	client := NewCommonClient()
+	client.BaseURL = testEnv.GetServerURL()
+	_ = client.Authenticate(context.Background(), TestFakeAuthOptions)
 
 	expected := testAccountDetailExpected
 	got, _, err := client.Account.Details(context.Background())
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't get service account details")
 	}
 
 	if !reflect.DeepEqual(got, expected) {

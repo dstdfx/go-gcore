@@ -15,6 +15,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	log "github.com/dstdfx/go-gcore/gcore/internal/logger"
 )
 
 const (
@@ -69,7 +71,7 @@ type Client struct {
 	// User agent for client.
 	UserAgent string
 
-	log GenericLogger
+	log log.GenericLogger
 
 	common service
 
@@ -144,14 +146,14 @@ func (c *Client) Authenticate(ctx context.Context, authOpts AuthOptions) error {
 }
 
 // NewCommonClient creates basic G-Core client.
-func NewCommonClient(logger ...GenericLogger) *CommonClient {
+func NewCommonClient(logger ...log.GenericLogger) *CommonClient {
 	baseURL, _ := url.Parse(defaultBaseURL)
 
 	c := &Client{
 		client:    NewHTTPClient(),
 		BaseURL:   baseURL,
 		UserAgent: defaultUserAgent,
-		log:       SelectLogger(logger...),
+		log:       log.SelectLogger(logger...),
 	}
 	c.common.client = c
 
@@ -171,14 +173,14 @@ func NewCommonClient(logger ...GenericLogger) *CommonClient {
 }
 
 // NewResellerClient creates reseller G-Core client.
-func NewResellerClient(logger ...GenericLogger) *ResellerClient {
+func NewResellerClient(logger ...log.GenericLogger) *ResellerClient {
 	baseURL, _ := url.Parse(defaultBaseURL)
 
 	c := &Client{
 		client:    NewHTTPClient(),
 		BaseURL:   baseURL,
 		UserAgent: defaultUserAgent,
-		log:       SelectLogger(logger...),
+		log:       log.SelectLogger(logger...),
 	}
 	c.common.client = c
 
@@ -193,7 +195,8 @@ func NewResellerClient(logger ...GenericLogger) *ResellerClient {
 }
 
 // NewRequest method returns new request by given options.
-func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body interface{}) (*http.Request, error) {
+func (c *Client) NewRequest(ctx context.Context,
+	method, urlStr string, body interface{}) (*http.Request, error) {
 
 	rel, err := url.Parse(urlStr)
 	if err != nil {
@@ -255,10 +258,14 @@ func (c *Client) Do(req *http.Request, to interface{}) (*http.Response, error) {
 			resp.Body = rdr2
 
 			c.log.Debugf("RESP BODY  %s", string(body))
-			respErr = fmt.Errorf("gcore: got the %d error status code from the server with body: %s",
-				resp.StatusCode, string(body))
+			respErr = fmt.Errorf(
+				"gcore: got the %d error status code from the server with body: %s",
+				resp.StatusCode,
+				string(body))
 		} else {
-			respErr = fmt.Errorf("gcore: got the %d error status code from the server", resp.StatusCode)
+			respErr = fmt.Errorf(
+				"gcore: got the %d error status code from the server",
+				resp.StatusCode)
 		}
 
 		return resp, respErr
