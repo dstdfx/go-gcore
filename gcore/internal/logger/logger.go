@@ -1,4 +1,4 @@
-package gcore
+package logger
 
 // GenericLogger represents common interface for different loggers.
 type GenericLogger interface {

@@ -7,11 +7,13 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	th "github.com/dstdfx/go-gcore/gcore/internal/testhelper"
 )
 
 // Fixtures
-var (
-	testGetClientResponse = `{
+const (
+	testGetClientRawResponse = `{
   "id": 2,
   "users": [
     {
@@ -43,7 +45,7 @@ var (
   "reseller": 1,
   "cname": "example.gcdn.co"
 }`
-	testCreateClientResponse = `{
+	testCreateClientRawResponse = `{
   "id": 2,
   "users": [],
   "currentUser": 7,
@@ -58,7 +60,7 @@ var (
   "utilization_level": 0,
   "reseller": 1
 }`
-	testListClientsResponse = `[{
+	testListClientsRawResponse = `[{
   "id": 2,
   "users": [
     {
@@ -90,7 +92,7 @@ var (
   "reseller": 1,
   "cname": "example.gcdn.co"
 }]`
-	testUpdateClientResponse = `{
+	testUpdateClientRawResponse = `{
   "id": 2,
   "users": [
     {
@@ -113,7 +115,7 @@ var (
   "currentUser": 7,
   "email": "common2@gcore.lu",
   "phone": "Client 2 Company Phone",
-  "name": "Another Name",
+  "name": "New name",
   "status": "trial",
   "created": "2018-04-09T11:31:40.000000Z",
   "updated": "2018-04-09T11:32:31.000000Z",
@@ -122,7 +124,25 @@ var (
   "reseller": 1
 }`
 
-	testUserTokenResponse = `{"token": "123123123ololo"}`
+	testUserTokenRawResponse = `{"token": "123123123ololo"}`
+)
+
+const (
+	testCreateClientRawRequest = `{
+  "user_type":"common",
+  "name":"Client 2 Name",
+  "company":"Client 2 Company Name",
+  "phone":"Client 2 Company Phone",
+  "email":"common2@gcore.lu",
+  "password":"123123123qwe"
+}`
+
+	testUpdateClientRawRequest = `{
+	"name": "New name",
+	"companyName":"Client 2 Company Name",
+  	"phone":"Client 2 Company Phone",
+  	"email":"common2@gcore.lu"
+	}`
 )
 
 // Expected results
@@ -240,7 +260,7 @@ var (
 		Reseller:         1,
 		Email:            "common2@gcore.lu",
 		Phone:            "Client 2 Company Phone",
-		Name:             "Client 2 Name",
+		Name:             "New name",
 	}
 
 	testUserTokenExpected = &Token{
@@ -250,22 +270,30 @@ var (
 )
 
 func TestClientsService_Create(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
 
-	mux.HandleFunc(resellUsersURL,
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testCreateClientResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         resellUsersURL,
+		RawResponse: testCreateClientRawResponse,
+		RawRequest:  testCreateClientRawRequest,
+		Method:      http.MethodPost,
+		Status:      http.StatusCreated,
+		CallFlag:    &endpointCalled,
+	}
 
-	resell := getAuthenticatedResellerClient()
+	th.HandleReqWithBody(t, handleOpts)
 
-	body := CreateClientBody{
+	resell := NewResellerClient()
+	resell.BaseURL = testEnv.GetServerURL()
+	_ = resell.Authenticate(context.Background(), TestFakeAuthOptions)
+
+	expected := testCreateClientExpected
+
+	body := &CreateClientBody{
 		UserType: "common",
 		Name:     "Client 2 Name",
 		Company:  "Client 2 Company Name",
@@ -274,10 +302,13 @@ func TestClientsService_Create(t *testing.T) {
 		Password: "123123123qwe",
 	}
 
-	got, _, err := resell.Clients.Create(context.Background(), &body)
-	expected := testCreateClientExpected
+	got, _, err := resell.Clients.Create(context.Background(), body)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't create new client account")
 	}
 
 	if !reflect.DeepEqual(got, expected) {
@@ -285,25 +316,36 @@ func TestClientsService_Create(t *testing.T) {
 	}
 }
 
-func TestClientService_Get(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+func TestClientsService_Get(t *testing.T) {
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
 
-	mux.HandleFunc(fmt.Sprintf(resellClientURL, testGetClientExpected.ID),
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testGetClientResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
-	resell := getAuthenticatedResellerClient()
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         fmt.Sprintf(resellClientURL, testGetClientExpected.ID),
+		RawResponse: testGetClientRawResponse,
+		Method:      http.MethodGet,
+		Status:      http.StatusOK,
+		CallFlag:    &endpointCalled,
+	}
+
+	th.HandleReqWithoutBody(t, handleOpts)
+
+	resell := NewResellerClient()
+	resell.BaseURL = testEnv.GetServerURL()
+	_ = resell.Authenticate(context.Background(), TestFakeAuthOptions)
+
+	expected := testGetClientExpected
 
 	got, _, err := resell.Clients.Get(context.Background(), testGetClientExpected.ID)
-	expected := testGetClientExpected
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't get a client account")
 	}
 
 	if !reflect.DeepEqual(got, expected) {
@@ -312,25 +354,35 @@ func TestClientService_Get(t *testing.T) {
 }
 
 func TestClientsService_List(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
 
-	mux.HandleFunc(resellClientsURL,
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testListClientsResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         resellClientsURL,
+		RawResponse: testListClientsRawResponse,
+		Method:      http.MethodGet,
+		Status:      http.StatusOK,
+		CallFlag:    &endpointCalled,
+	}
 
-	resell := getAuthenticatedResellerClient()
+	th.HandleReqWithoutBody(t, handleOpts)
+
+	resell := NewResellerClient()
+	resell.BaseURL = testEnv.GetServerURL()
+	_ = resell.Authenticate(context.Background(), TestFakeAuthOptions)
+
+	expected := testListClientsExpected
 
 	got, _, err := resell.Clients.List(context.Background(), ListOpts{})
-	expected := testListClientsExpected
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't get a list of accounts")
 	}
 
 	if !reflect.DeepEqual(got, expected) {
@@ -339,28 +391,43 @@ func TestClientsService_List(t *testing.T) {
 }
 
 func TestClientsService_Update(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
 
-	mux.HandleFunc(fmt.Sprintf(resellClientURL, testUpdateClientExpected.ID),
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testUpdateClientResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         fmt.Sprintf(resellClientURL, testGetClientExpected.ID),
+		RawResponse: testUpdateClientRawResponse,
+		RawRequest:  testUpdateClientRawRequest,
+		Method:      http.MethodPut,
+		Status:      http.StatusCreated,
+		CallFlag:    &endpointCalled,
+	}
 
-	resell := getAuthenticatedResellerClient()
+	th.HandleReqWithBody(t, handleOpts)
 
-	body := UpdateClientBody{Name: "Another Name"}
-	testUpdateClientExpected.Name = "Another Name"
+	resell := NewResellerClient()
+	resell.BaseURL = testEnv.GetServerURL()
+	_ = resell.Authenticate(context.Background(), TestFakeAuthOptions)
 
 	expected := testUpdateClientExpected
-	got, _, err := resell.Clients.Update(context.Background(), expected.ID, &body)
+
+	body := &UpdateClientBody{
+		Name:        "New name",
+		CompanyName: expected.CompanyName,
+		Email:       expected.Email,
+		Phone:       expected.Phone,
+	}
+
+	got, _, err := resell.Clients.Update(context.Background(), testGetClientExpected.ID, body)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't update client account")
 	}
 
 	if !reflect.DeepEqual(got, expected) {
@@ -369,28 +436,38 @@ func TestClientsService_Update(t *testing.T) {
 }
 
 func TestClientsService_GetCommonClient(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
 
-	resell := getAuthenticatedResellerClient()
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         fmt.Sprintf(resellUserTokenURL, testGetClientExpected.ID),
+		RawResponse: testUserTokenRawResponse,
+		Method:      http.MethodGet,
+		Status:      http.StatusOK,
+		CallFlag:    &endpointCalled,
+	}
 
-	mux.HandleFunc(fmt.Sprintf(resellUserTokenURL, testGetClientExpected.ID),
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testUserTokenResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
+	th.HandleReqWithoutBody(t, handleOpts)
 
-	common, _, err := resell.Clients.GetCommonClient(context.Background(), testGetClientExpected.ID)
+	resell := NewResellerClient()
+	resell.BaseURL = testEnv.GetServerURL()
+	_ = resell.Authenticate(context.Background(), TestFakeAuthOptions)
+
+	expected := testUserTokenExpected
+
+	got, _, err := resell.Clients.GetCommonClient(context.Background(), testGetClientExpected.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(common.Token, testUserTokenExpected) {
-		t.Errorf("Expected: %+v, got %+v\n", testUserTokenExpected, common.Token)
+	if !endpointCalled {
+		t.Fatal("didn't get a client account")
 	}
 
+	if !reflect.DeepEqual(got.Token, expected) {
+		t.Errorf("Expected: %+v, got %+v\n", expected, got)
+	}
 }

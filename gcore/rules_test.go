@@ -6,11 +6,13 @@ import (
 	"net/http"
 	"reflect"
 	"testing"
+
+	th "github.com/dstdfx/go-gcore/gcore/internal/testhelper"
 )
 
 // Fixtures
-var (
-	testCreateRuleResponse = `{
+const (
+	testCreateRuleRawResponse = `{
    "rule" : "/images",
    "originGroup" : null,
    "preset_applied" : false,
@@ -54,7 +56,7 @@ var (
    "weight" : 2,
    "originProtocol" : "HTTP"
 }`
-	testGetRuleResponse = `{
+	testGetRuleRawResponse = `{
    "rule" : "/images",
    "originGroup" : null,
    "preset_applied" : false,
@@ -98,7 +100,7 @@ var (
    "weight" : 2,
    "originProtocol" : "HTTP"
 }`
-	testListRuleResponse = `[
+	testListRuleRawResponse = `[
 {
    "rule" : "/images",
    "originGroup" : null,
@@ -142,6 +144,43 @@ var (
    "id" : 1861,
    "weight" : 2,
    "originProtocol" : "HTTP"}]`
+)
+
+const (
+	testCreateRuleRawRequest = `{  
+   "rule":"",
+   "name":"whatever",
+   "ruleType":0,
+   "options":{  
+      "cache_http_headers":{  
+         "enabled":true,
+         "value":[  
+            "x-token"
+         ]
+      },
+      "cache_expire":null,
+      "allowedHttpMethods":null,
+      "cors":null,
+      "country_acl":null,
+      "disable_cache":null,
+      "fetch_compressed":null,
+      "force_return":null,
+      "gzipOn":null,
+      "hostHeader":null,
+      "ignoreQueryString":null,
+      "ignore_cookie":null,
+      "ip_address_acl":null,
+      "override_browser_ttl":null,
+      "proxy_cache_methods_set":null,
+      "referrer_acl":null,
+      "rewrite":null,
+      "secure_key":null,
+      "slice":null,
+      "stale":null,
+      "staticHeaders":null,
+      "user_agent_acl":null
+   }
+}`
 )
 
 var (
@@ -196,21 +235,30 @@ var (
 )
 
 func TestRulesService_Create(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
+
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         fmt.Sprintf(rulesURL, fakeResourceID),
+		RawResponse: testCreateRuleRawResponse,
+		RawRequest:  testCreateRuleRawRequest,
+		Method:      http.MethodPost,
+		Status:      http.StatusCreated,
+		CallFlag:    &endpointCalled,
+	}
+
+	th.HandleReqWithBody(t, handleOpts)
+
+	client := NewCommonClient()
+	client.BaseURL = testEnv.GetServerURL()
+	_ = client.Authenticate(context.Background(), TestFakeAuthOptions)
 
 	expected := testCreateRuleExpected
-	mux.HandleFunc(fmt.Sprintf(rulesURL, fakeResourceID),
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testCreateRuleResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
 
-	body := CreateRuleBody{
+	body := &CreateRuleBody{
 		RuleType: 0,
 		Name:     "whatever",
 		Options: Options{
@@ -221,10 +269,13 @@ func TestRulesService_Create(t *testing.T) {
 		},
 	}
 
-	client := getAuthenticatedCommonClient()
-	got, _, err := client.Rules.Create(context.Background(), fakeResourceID, &body)
+	got, _, err := client.Rules.Create(context.Background(), fakeResourceID, body)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't create rules")
 	}
 
 	if !reflect.DeepEqual(got, expected) {
@@ -233,50 +284,35 @@ func TestRulesService_Create(t *testing.T) {
 }
 
 func TestRulesService_Get(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
+
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         fmt.Sprintf(ruleURL, fakeResourceID, testGetRuleExpected.ID),
+		RawResponse: testGetRuleRawResponse,
+		Method:      http.MethodGet,
+		Status:      http.StatusOK,
+		CallFlag:    &endpointCalled,
+	}
+
+	th.HandleReqWithoutBody(t, handleOpts)
+
+	client := NewCommonClient()
+	client.BaseURL = testEnv.GetServerURL()
+	_ = client.Authenticate(context.Background(), TestFakeAuthOptions)
 
 	expected := testGetRuleExpected
-	mux.HandleFunc(fmt.Sprintf(ruleURL, fakeResourceID, expected.ID),
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testGetRuleResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
 
-	client := getAuthenticatedCommonClient()
-	got, _, err := client.Rules.Get(context.Background(), fakeResourceID, expected.ID)
+	got, _, err := client.Rules.Get(context.Background(), fakeResourceID, testGetRuleExpected.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(got, expected) {
-		t.Errorf("Expected: %+v, got %+v\n", expected, got)
-	}
-}
-
-func TestRulesService_List(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
-
-	setupGCoreAuthServer()
-
-	expected := testListRuleExpected
-	mux.HandleFunc(fmt.Sprintf(rulesURL, fakeResourceID),
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testListRuleResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
-
-	client := getAuthenticatedCommonClient()
-	got, _, err := client.Rules.List(context.Background(), fakeResourceID)
-	if err != nil {
-		t.Fatal(err)
+	if !endpointCalled {
+		t.Fatal("didn't get rules")
 	}
 
 	if !reflect.DeepEqual(got, expected) {
@@ -285,20 +321,69 @@ func TestRulesService_List(t *testing.T) {
 }
 
 func TestRulesService_Delete(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
 
-	expected := testGetRuleExpected
-	mux.HandleFunc(fmt.Sprintf(ruleURL, fakeResourceID, expected.ID),
-		func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusNoContent)
-		})
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         fmt.Sprintf(ruleURL, fakeResourceID, testGetRuleExpected.ID),
+		RawResponse: "",
+		Method:      http.MethodDelete,
+		Status:      http.StatusOK,
+		CallFlag:    &endpointCalled,
+	}
 
-	client := getAuthenticatedCommonClient()
-	_, err := client.Rules.Delete(context.Background(), fakeResourceID, expected.ID)
+	th.HandleReqWithoutBody(t, handleOpts)
+
+	client := NewCommonClient()
+	client.BaseURL = testEnv.GetServerURL()
+	_ = client.Authenticate(context.Background(), TestFakeAuthOptions)
+
+	_, err := client.Rules.Delete(context.Background(), fakeResourceID, testGetRuleExpected.ID)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't delete rules")
+	}
+}
+
+func TestRulesService_List(t *testing.T) {
+	endpointCalled := false
+
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
+
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         fmt.Sprintf(rulesURL, fakeResourceID),
+		RawResponse: testListRuleRawResponse,
+		Method:      http.MethodGet,
+		Status:      http.StatusOK,
+		CallFlag:    &endpointCalled,
+	}
+
+	th.HandleReqWithoutBody(t, handleOpts)
+
+	client := NewCommonClient()
+	client.BaseURL = testEnv.GetServerURL()
+	_ = client.Authenticate(context.Background(), TestFakeAuthOptions)
+
+	expected := testListRuleExpected
+
+	got, _, err := client.Rules.List(context.Background(), fakeResourceID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't get rules")
+	}
+
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("Expected: %+v, got %+v\n", expected, got)
 	}
 }

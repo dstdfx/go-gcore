@@ -3,43 +3,45 @@ package gcore
 import (
 	"context"
 	"testing"
+
+	th "github.com/dstdfx/go-gcore/gcore/internal/testhelper"
 )
 
-func TestNewCommonClient(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+var TestFakeAuthOptions = AuthOptions{
+	Username: "whatever",
+	Password: "whatever",
+}
 
-	setupGCoreAuthServer()
+func TestNewCommonClient(t *testing.T) {
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
 
 	common := NewCommonClient()
-	common.BaseURL = mockClientURL()
+	common.BaseURL = testEnv.GetServerURL()
 
-	err := common.Authenticate(context.Background(), fakeAuthOpts)
+	err := common.Authenticate(context.Background(), TestFakeAuthOptions)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if common.Token.Value != fakeToken {
-		t.Errorf("Expected: %s, got %s", fakeToken, common.Token.Value)
+	if common.Token.Value != th.TestFakeToken {
+		t.Errorf("Expected: %s, got %s", th.TestFakeToken, common.Token.Value)
 	}
 }
 
 func TestNewResellerClient(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
-
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
 
 	reseller := NewResellerClient()
-	reseller.BaseURL = mockClientURL()
+	reseller.BaseURL = testEnv.GetServerURL()
 
-	err := reseller.Authenticate(context.Background(), fakeAuthOpts)
+	err := reseller.Authenticate(context.Background(), TestFakeAuthOptions)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if reseller.Token.Value != fakeToken {
-		t.Errorf("Expected: %s, got %s", fakeToken, reseller.Token.Value)
+	if reseller.Token.Value != th.TestFakeToken {
+		t.Errorf("Expected: %s, got %s", th.TestFakeToken, reseller.Token.Value)
 	}
-
 }

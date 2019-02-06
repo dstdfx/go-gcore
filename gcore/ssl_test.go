@@ -7,11 +7,13 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	th "github.com/dstdfx/go-gcore/gcore/internal/testhelper"
 )
 
 // Fixtures
-var (
-	testCreateSSLResponse = `{
+const (
+	testCreateSSLRawResponse = `{
    "deleted" : false,
    "cert_subject_alt" : null,
    "hasRelatedResources" : true,
@@ -23,7 +25,7 @@ var (
    "cert_issuer" : "Let's Encrypt Authority X3",
    "cert_subject_cn" : "gcdn.example.me"
 }`
-	testGetSSLResponse = `{
+	testGetSSLRawResponse = `{
    "deleted" : false,
    "cert_subject_alt" : null,
    "hasRelatedResources" : true,
@@ -35,7 +37,7 @@ var (
    "cert_issuer" : "Let's Encrypt Authority X3",
    "cert_subject_cn" : "gcdn.example.me"
 }`
-	testListSSLResponse = `[
+	testListSSLRawResponse = `[
    {
       "validity_not_before" : "2018-04-13T16:01:59Z",
       "validity_not_after" : "2018-07-12T16:01:59Z",
@@ -49,6 +51,14 @@ var (
       "deleted" : false
    }
 ]`
+)
+
+const (
+	testCreateSSLRawRequest = `{  
+   "name":"gcdn.example.me",
+   "sslCertificate":"-----BEGIN CERTIFICATE----\nMIIDXTCCAkWgAwIBAgIJAIQqKEM2sJZYMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV\nBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\naWRnaXRzIFB0eSBMdGQwHhcNMTcwNzAzMDU1NjU1WhcNMTgwNzAzMDU1NjU1WjBF\nMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50\n-----END CERTIFICATE-----",
+   "sslPrivateKey":"-----BEGIN PRIVATE KEY-----\\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDZcNCZiNNHfX2O\\ndZpf12mv2rAZwqGZBAdpox0wntEPK3JciQ7ZRloLJeHuCNIJs9MidnH7Xk8zveju\\nmab6HmfIzvMJAAm88OYWMFQRiYe1ggJEHMe7yYPQbtXwTqWDYdWmjPPma3Ujqqmb\\nhmVX2rsYILD7cUjS+e0Ucfqx3QODQj/aujTt1rS0gFhJ0soY5m+C6VimPCx4Bjyw\\n5rhtskJDRrfXxrIhVXOvSPFRyxDSfjt3win8vjhhZ3oFPWgrl9lVhn0zaB5hjDsd\\n-----END PRIVATE KEY-----\\n"
+}`
 )
 
 var (
@@ -92,31 +102,43 @@ var (
 	}
 )
 
-func TestSSLService_Add(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+func TestCertService_Add(t *testing.T) {
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
+
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         certificatesURL,
+		RawResponse: testCreateSSLRawResponse,
+		RawRequest:  testCreateSSLRawRequest,
+		Method:      http.MethodPost,
+		Status:      http.StatusCreated,
+		CallFlag:    &endpointCalled,
+	}
+
+	th.HandleReqWithoutBody(t, handleOpts)
+
+	client := NewCommonClient()
+	client.BaseURL = testEnv.GetServerURL()
+	_ = client.Authenticate(context.Background(), TestFakeAuthOptions)
 
 	expected := testCreateSSLExpected
-	mux.HandleFunc(certificatesURL,
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testCreateSSLResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
 
-	body := AddCertBody{
+	body := &AddCertBody{
 		Name:        "gcdn.example.me",
 		Certificate: "-----BEGIN CERTIFICATE----\nMIIDXTCCAkWgAwIBAgIJAIQqKEM2sJZYMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV\nBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\naWRnaXRzIFB0eSBMdGQwHhcNMTcwNzAzMDU1NjU1WhcNMTgwNzAzMDU1NjU1WjBF\nMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50\n-----END CERTIFICATE-----",
 		PrivateKey:  `-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDZcNCZiNNHfX2O\ndZpf12mv2rAZwqGZBAdpox0wntEPK3JciQ7ZRloLJeHuCNIJs9MidnH7Xk8zveju\nmab6HmfIzvMJAAm88OYWMFQRiYe1ggJEHMe7yYPQbtXwTqWDYdWmjPPma3Ujqqmb\nhmVX2rsYILD7cUjS+e0Ucfqx3QODQj/aujTt1rS0gFhJ0soY5m+C6VimPCx4Bjyw\n5rhtskJDRrfXxrIhVXOvSPFRyxDSfjt3win8vjhhZ3oFPWgrl9lVhn0zaB5hjDsd\n-----END PRIVATE KEY-----\n`,
 	}
 
-	client := getAuthenticatedCommonClient()
-	got, _, err := client.Certificates.Add(context.Background(), &body)
+	got, _, err := client.Certificates.Add(context.Background(), body)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't add a certificate")
 	}
 
 	if !reflect.DeepEqual(got, expected) {
@@ -124,25 +146,36 @@ func TestSSLService_Add(t *testing.T) {
 	}
 }
 
-func TestSSLService_Get(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+func TestCertService_Get(t *testing.T) {
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
+
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         fmt.Sprintf(certificateURL, testGetSSLExpected.ID),
+		RawResponse: testGetSSLRawResponse,
+		Method:      http.MethodGet,
+		Status:      http.StatusCreated,
+		CallFlag:    &endpointCalled,
+	}
+
+	th.HandleReqWithoutBody(t, handleOpts)
+
+	client := NewCommonClient()
+	client.BaseURL = testEnv.GetServerURL()
+	_ = client.Authenticate(context.Background(), TestFakeAuthOptions)
 
 	expected := testGetSSLExpected
-	mux.HandleFunc(fmt.Sprintf(certificateURL, expected.ID),
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testGetSSLResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
 
-	client := getAuthenticatedCommonClient()
-	got, _, err := client.Certificates.Get(context.Background(), expected.ID)
+	got, _, err := client.Certificates.Get(context.Background(), testGetSSLExpected.ID)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't get a certificate")
 	}
 
 	if !reflect.DeepEqual(got, expected) {
@@ -150,47 +183,70 @@ func TestSSLService_Get(t *testing.T) {
 	}
 }
 
-func TestSSLService_List(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
+func TestCertService_Delete(t *testing.T) {
+	endpointCalled := false
 
-	setupGCoreAuthServer()
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
+
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         fmt.Sprintf(certificateURL, testGetSSLExpected.ID),
+		RawResponse: "",
+		Method:      http.MethodDelete,
+		Status:      http.StatusCreated,
+		CallFlag:    &endpointCalled,
+	}
+
+	th.HandleReqWithoutBody(t, handleOpts)
+
+	client := NewCommonClient()
+	client.BaseURL = testEnv.GetServerURL()
+	_ = client.Authenticate(context.Background(), TestFakeAuthOptions)
+
+	_, err := client.Certificates.Delete(context.Background(), testGetSSLExpected.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !endpointCalled {
+		t.Fatal("didn't delete a certificate")
+	}
+}
+
+func TestCertService_List(t *testing.T) {
+	endpointCalled := false
+
+	testEnv := th.SetupTestEnv()
+	defer testEnv.TearDownTestEnv()
+
+	handleOpts := &th.HandleReqOpts{
+		Mux:         testEnv.Mux,
+		URL:         certificatesURL,
+		RawResponse: testListSSLRawResponse,
+		Method:      http.MethodGet,
+		Status:      http.StatusCreated,
+		CallFlag:    &endpointCalled,
+	}
+
+	th.HandleReqWithoutBody(t, handleOpts)
+
+	client := NewCommonClient()
+	client.BaseURL = testEnv.GetServerURL()
+	_ = client.Authenticate(context.Background(), TestFakeAuthOptions)
 
 	expected := testListSSLExpected
-	mux.HandleFunc(certificatesURL,
-		func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(testListSSLResponse))
-			if err != nil {
-				t.Fatal(err)
-			}
-		})
 
-	client := getAuthenticatedCommonClient()
 	got, _, err := client.Certificates.List(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	if !endpointCalled {
+		t.Fatal("didn't get a list of certificates")
+	}
+
 	if !reflect.DeepEqual(got, expected) {
 		t.Errorf("Expected: %+v, got %+v\n", expected, got)
-	}
-}
-
-func TestSSLService_Delete(t *testing.T) {
-	setupHTTP()
-	defer teardownHTTP()
-
-	setupGCoreAuthServer()
-
-	expected := testGetSSLExpected
-	mux.HandleFunc(fmt.Sprintf(certificateURL, expected.ID),
-		func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusNoContent)
-		})
-
-	client := getAuthenticatedCommonClient()
-	_, err := client.Certificates.Delete(context.Background(), expected.ID)
-	if err != nil {
-		t.Fatal(err)
 	}
 }
