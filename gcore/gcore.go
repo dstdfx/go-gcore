@@ -21,7 +21,7 @@ import (
 
 const (
 	// version represents library version.
-	version = "2.1.0"
+	version = "2.3.0"
 
 	// defaultUserAgent represents default value of User-Agent header.
 	defaultUserAgent = "go-gcore/" + version
