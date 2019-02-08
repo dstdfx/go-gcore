@@ -10,7 +10,6 @@ type GenericLogger interface {
 	Warnf(format string, args ...interface{})
 	Error(args ...interface{})
 	Errorf(format string, args ...interface{})
-	Println(v ...interface{})
 }
 
 // VoidLogger represents nil implementation of GenericLogger.
@@ -39,9 +38,6 @@ func (l *VoidLogger) Error(args ...interface{}) {}
 
 // Errorf void implementation.
 func (l *VoidLogger) Errorf(format string, args ...interface{}) {}
-
-// Println void implementation.
-func (l VoidLogger) Println(v ...interface{}) {}
 
 // SelectLogger returns one logger from given.
 func SelectLogger(logger ...GenericLogger) GenericLogger {
