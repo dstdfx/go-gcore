@@ -74,18 +74,35 @@ type CacheExpire struct {
 	Value   int  `json:"value"`
 }
 
+// HTTPMethodValue represents the type for the AllowedHTTPMethods option value.
+type HTTPMethodValue string
+
+// The list of the possible values for the AllowedHTTPMethods option.
+const (
+	HTTPMethodGET    HTTPMethodValue = "GET"
+	HTTPMethodHEAD   HTTPMethodValue = "HEAD"
+	HTTPMethodPOST   HTTPMethodValue = "POST"
+	HTTPMethodPUT    HTTPMethodValue = "PUT"
+	HTTPMethodPATCH  HTTPMethodValue = "PATCH"
+	HTTPMethodDELETE HTTPMethodValue = "DELETE"
+	HTTPMethodOPTION HTTPMethodValue = "OPTION"
+)
+
 // AllowedHTTPMethods is the list of allowed HTTP methods.
 type AllowedHTTPMethods struct {
-	Enabled bool     `json:"enabled"`
-	Value   []string `json:"value"`
+	Enabled bool              `json:"enabled"`
+	Value   []HTTPMethodValue `json:"value"`
 }
 
 // CORS option allows you to add Access-Control-Allow-Origin for the specified domains or for all domains.
-// It has two parameters:
-// For all domains
+// The option adds the Access-Control-Allow-Origin header to responses from CDN servers.
+// It has 3 parameters
+// Adds * as the Access-Control-Allow-Origin header value
 // "value": ["*"]
-// For the specified list of domains
+// Adds "$http_origin" as the Access-Control-Allow-Origin header value if the origin matches one of the listed domains
 // "value": ["domain.com", "second.dom.com"]
+// Adds "$http_origin" as the Access-Control-Allow-Origin header value
+// "value": ["$http_origin"]
 type CORS struct {
 	Enabled bool     `json:"enabled"`
 	Value   []string `json:"value"`
@@ -213,10 +230,28 @@ type Slice struct {
 	Value   bool `json:"value"`
 }
 
+// StaleValue represents the type for the Stale option value.
+type StaleValue string
+
+// The list of the possible values for Stale option.
+const (
+	StaleError               StaleValue = "error"
+	StaleForbidden           StaleValue = "ttp_403"
+	StaleBadRequest          StaleValue = "http_404"
+	StaleTooManyRequests     StaleValue = "http_429"
+	StaleInternalServerError StaleValue = "http_500"
+	StaleBadGateway          StaleValue = "http_502"
+	StaleServiceUnavailable  StaleValue = "http_503"
+	StaleGatewayTimeout      StaleValue = "http_504"
+	StaleInvalidHeader       StaleValue = "invalid_header"
+	StaleTimeout             StaleValue = "timeout"
+	StaleUpdating            StaleValue = "updating"
+)
+
 // Stale is the list of errors which the option is applied for.
 type Stale struct {
-	Enabled bool     `json:"enabled"`
-	Value   []string `json:"value"`
+	Enabled bool         `json:"enabled"`
+	Value   []StaleValue `json:"value"`
 }
 
 // StaticHeaders specifies custom HTTP Headers that a CDN server adds to response.

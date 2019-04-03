@@ -292,7 +292,7 @@ var (
 			AllowedHTTPMethods: nil,
 			Stale: &Stale{
 				Enabled: true,
-				Value:   []string{"error", "updating"},
+				Value:   []StaleValue{StaleError, StaleUpdating},
 			},
 			CORS:                 nil,
 			ProxyCacheMethodsSet: nil,
@@ -345,7 +345,7 @@ var (
 			AllowedHTTPMethods: nil,
 			Stale: &Stale{
 				Enabled: true,
-				Value:   []string{"error", "updating"},
+				Value:   []StaleValue{StaleError, StaleUpdating},
 			},
 			CORS:                 nil,
 			ProxyCacheMethodsSet: nil,
@@ -398,7 +398,7 @@ var (
 			AllowedHTTPMethods: nil,
 			Stale: &Stale{
 				Enabled: true,
-				Value:   []string{"error", "updating"},
+				Value:   []StaleValue{StaleError, StaleUpdating},
 			},
 			CORS:                 nil,
 			ProxyCacheMethodsSet: nil,
@@ -451,7 +451,7 @@ var (
 			AllowedHTTPMethods: nil,
 			Stale: &Stale{
 				Enabled: true,
-				Value:   []string{"error", "updating"},
+				Value:   []StaleValue{StaleError, StaleUpdating},
 			},
 			CORS:                 nil,
 			ProxyCacheMethodsSet: nil,
