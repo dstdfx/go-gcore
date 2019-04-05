@@ -106,7 +106,8 @@ type CommonServices struct {
 
 // ResellerServices represent specific account type features.
 type ResellerServices struct {
-	Clients *ClientsService
+	Clients         *ClientsService
+	GeoRestrictions *GeoRestrictionsService
 }
 
 // AuthOptions is G-Core account credentials.
@@ -186,6 +187,7 @@ func NewResellerClient(logger ...log.GenericLogger) *ResellerClient {
 
 	resellerServices := ResellerServices{}
 	resellerServices.Clients = (*ClientsService)(&c.common)
+	resellerServices.GeoRestrictions = (*GeoRestrictionsService)(&c.common)
 	resellClient := &ResellerClient{
 		Client:           c,
 		ResellerServices: resellerServices,
