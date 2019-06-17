@@ -173,12 +173,70 @@ func NewCommonClient(logger ...log.GenericLogger) *CommonClient {
 	return commonClient
 }
 
+// NewCommonClientWithCustomHTTP creates basic G-Core client with custom HTTP client.
+func NewCommonClientWithCustomHTTP(customClient *http.Client, logger ...log.GenericLogger) *CommonClient {
+	baseURL, _ := url.Parse(defaultBaseURL)
+
+	if customClient == nil {
+		customClient = NewHTTPClient()
+	}
+
+	c := &Client{
+		client:    customClient,
+		BaseURL:   baseURL,
+		UserAgent: defaultUserAgent,
+		log:       log.SelectLogger(logger...),
+	}
+	c.common.client = c
+
+	commonServices := CommonServices{}
+	commonServices.Account = (*AccountService)(&c.common)
+	commonServices.Resources = (*ResourcesService)(&c.common)
+	commonServices.OriginGroups = (*OriginGroupsService)(&c.common)
+	commonServices.Rules = (*RulesService)(&c.common)
+	commonServices.Certificates = (*CertService)(&c.common)
+
+	commonClient := &CommonClient{
+		Client:         c,
+		CommonServices: commonServices,
+	}
+
+	return commonClient
+}
+
 // NewResellerClient creates reseller G-Core client.
 func NewResellerClient(logger ...log.GenericLogger) *ResellerClient {
 	baseURL, _ := url.Parse(defaultBaseURL)
 
 	c := &Client{
 		client:    NewHTTPClient(),
+		BaseURL:   baseURL,
+		UserAgent: defaultUserAgent,
+		log:       log.SelectLogger(logger...),
+	}
+	c.common.client = c
+
+	resellerServices := ResellerServices{}
+	resellerServices.Clients = (*ClientsService)(&c.common)
+	resellerServices.GeoRestrictions = (*GeoRestrictionsService)(&c.common)
+	resellClient := &ResellerClient{
+		Client:           c,
+		ResellerServices: resellerServices,
+	}
+
+	return resellClient
+}
+
+// NewResellerClientWithCustomHTTP creates reseller G-Core client with custom HTTP client.
+func NewResellerClientWithCustomHTTP(customClient *http.Client, logger ...log.GenericLogger) *ResellerClient {
+	baseURL, _ := url.Parse(defaultBaseURL)
+
+	if customClient == nil {
+		customClient = NewHTTPClient()
+	}
+
+	c := &Client{
+		client:    customClient,
 		BaseURL:   baseURL,
 		UserAgent: defaultUserAgent,
 		log:       log.SelectLogger(logger...),
