@@ -108,6 +108,7 @@ type CommonServices struct {
 type ResellerServices struct {
 	Clients         *ClientsService
 	GeoRestrictions *GeoRestrictionsService
+	Services        *ServicesService
 }
 
 // AuthOptions is G-Core account credentials.
@@ -219,6 +220,7 @@ func NewResellerClient(logger ...log.GenericLogger) *ResellerClient {
 	resellerServices := ResellerServices{}
 	resellerServices.Clients = (*ClientsService)(&c.common)
 	resellerServices.GeoRestrictions = (*GeoRestrictionsService)(&c.common)
+	resellerServices.Services = (*ServicesService)(&c.common)
 	resellClient := &ResellerClient{
 		Client:           c,
 		ResellerServices: resellerServices,
@@ -246,6 +248,7 @@ func NewResellerClientWithCustomHTTP(customClient *http.Client, logger ...log.Ge
 	resellerServices := ResellerServices{}
 	resellerServices.Clients = (*ClientsService)(&c.common)
 	resellerServices.GeoRestrictions = (*GeoRestrictionsService)(&c.common)
+	resellerServices.Services = (*ServicesService)(&c.common)
 	resellClient := &ResellerClient{
 		Client:           c,
 		ResellerServices: resellerServices,

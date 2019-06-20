@@ -8,12 +8,10 @@ import (
 )
 
 const (
-	resellUsersURL          = "/users"
-	resellClientsURL        = "/clients"
-	resellClientURL         = "/clients/%d"
-	resellUserTokenURL      = "/users/%d/token"
-	resellClientServicesURL = "/clients/%d/services"
-	resellClientServiceURL  = "/clients/%d/services/%d"
+	resellUsersURL     = "/users"
+	resellClientsURL   = "/clients"
+	resellClientURL    = "/clients/%d"
+	resellUserTokenURL = "/users/%d/token"
 )
 
 // ClientsService handles communication with the client related methods
@@ -173,121 +171,4 @@ func (s *ClientsService) GetCommonClient(ctx context.Context, userID int) (*Comm
 	commonClient.Token = token
 
 	return commonClient, resp, nil
-}
-
-// PaidService represents G-Core paid service.
-type PaidService struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-// SuspendCDN method suspends CDN-service for given clientID.
-// This feature has been taken from the admin web-panel, is not documented at all.
-// It allows to pause CDN service for specific client.
-func (s *ClientsService) SuspendCDN(ctx context.Context, clientID int) (*http.Response, error) {
-
-	url := fmt.Sprintf(resellClientServicesURL, clientID)
-	opts := struct {
-		Name string `param:"name"`
-	}{"CDN"}
-
-	// Add service name param as "CDN" to get CDN-service details
-	queryParams, err := BuildQueryParameters(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	if queryParams != "" {
-		url = strings.Join([]string{url, queryParams}, "?")
-	}
-
-	// Get CDN-service details
-	req, err := s.client.NewRequest(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	paidServices := make([]PaidService, 0)
-
-	resp, err := s.client.Do(req, &paidServices)
-	if err != nil {
-		return resp, err
-	}
-
-	body := struct {
-		Enabled bool   `json:"enabled"`
-		Status  string `json:"status"`
-	}{false, "paused"}
-
-	// TODO: fixme
-	// The only one CDN service is supposed to be
-	req, err = s.client.NewRequest(ctx,
-		http.MethodPut,
-		fmt.Sprintf(resellClientServiceURL, clientID, paidServices[0].ID),
-		body)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err = s.client.Do(req, nil)
-	if err != nil {
-		return resp, err
-	}
-
-	return resp, nil
-}
-
-// ResumeCDN method resumes CDN-service for given clientID.
-// This feature has been taken from the admin web-panel, is not documented at all.
-// It allows to resume CDN service for specific client.
-func (s *ClientsService) ResumeCDN(ctx context.Context, clientID int) (*http.Response, error) {
-
-	url := fmt.Sprintf(resellClientServicesURL, clientID)
-	opts := struct {
-		Name string `param:"name"`
-	}{"CDN"}
-
-	// Add service name param as "CDN" to get CDN-service details
-	queryParams, err := BuildQueryParameters(opts)
-	if err != nil {
-		return nil, err
-	}
-
-	if queryParams != "" {
-		url = strings.Join([]string{url, queryParams}, "?")
-	}
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	paidServices := make([]PaidService, 0)
-
-	resp, err := s.client.Do(req, &paidServices)
-	if err != nil {
-		return resp, err
-	}
-
-	body := struct {
-		Enabled bool   `json:"enabled"`
-		Status  string `json:"status"`
-	}{true, "active"}
-
-	// TODO: fixme
-	// The only one CDN service is supposed to be
-	req, err = s.client.NewRequest(ctx,
-		http.MethodPut,
-		fmt.Sprintf(resellClientServiceURL, clientID, paidServices[0].ID),
-		body)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err = s.client.Do(req, nil)
-	if err != nil {
-		return resp, err
-	}
-
-	return resp, nil
 }
