@@ -35,15 +35,15 @@ const (
 
 	// defaultDialTimeout represents default timeout (in seconds) for HTTP
 	// connection establishments.
-	defaultDialTimeout = 5
+	defaultDialTimeout = 60
 
 	// defaultTLSHandshakeTimeout represents default timeout (in seconds) for
 	// TSL handshake timeout.
-	defaultTLSHandshakeTimeout = 5
+	defaultTLSHandshakeTimeout = 60
 
 	// defaultKeepAlive specifies default the keep-alive period for an active
 	// network connection.
-	defaultKeepAlive = 30
+	defaultKeepAlive = 60
 
 	// MaxIdleConns controls default number of idle (keep-alive)
 	// connections across all hosts.
@@ -52,7 +52,7 @@ const (
 	// IdleConnTimeout is default amount of time an idle
 	// (keep-alive) connection will remain idle before closing
 	// itself.
-	defaultIdleConnTimeout = 90
+	defaultIdleConnTimeout = 100
 
 	// loginURL represents default login URL for accessing G-Core CDN API.
 	loginURL = "/auth/signin"
